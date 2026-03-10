@@ -11,7 +11,7 @@ builder.Services
     .AddControllers()
     .AddApplicationPart(typeof(IdentityModuleMarker).Assembly);
 
-builder.Services.AddIdentityModule();
+builder.Services.AddIdentityModule(builder.Configuration);
 
 var app = builder.Build();
 
