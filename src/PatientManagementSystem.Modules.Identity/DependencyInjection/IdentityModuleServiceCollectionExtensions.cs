@@ -22,6 +22,8 @@ public static class IdentityModuleServiceCollectionExtensions
         services.AddDbContext<IdentityDbContext>(options =>
             options.UseNpgsql(connectionString));
 
+        services.AddDataProtection();
+        
         services
             .AddIdentityCore<ApplicationUser>(options =>
             {
