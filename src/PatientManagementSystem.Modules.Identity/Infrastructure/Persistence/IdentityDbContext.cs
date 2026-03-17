@@ -1,3 +1,5 @@
+using Microsoft.Extensions.DependencyInjection;
+
 namespace PatientManagementSystem.Modules.Identity.Infrastructure.Persistence;
 
 using Microsoft.AspNetCore.Identity;
@@ -25,27 +27,26 @@ public class IdentityDbContext
             entity.ToTable("users");
 
             entity.Property(x => x.FirstName)
-                .HasColumnName("first_name")
                 .IsRequired()
                 .HasMaxLength(100);
 
             entity.Property(x => x.LastName)
-                .HasColumnName("last_name")
                 .IsRequired()
                 .HasMaxLength(100);
+            
+            entity.Property(x => x.BirthDate)
+                .HasColumnType("date")
+                .IsRequired();
 
             entity.Property(x => x.IsActive)
-                .HasColumnName("is_active")
                 .IsRequired()
                 .HasDefaultValue(true);
 
             entity.Property(x => x.CreatedAtUtc)
-                .HasColumnName("created_at_utc")
                 .HasColumnType("timestamp with time zone")
                 .IsRequired();
 
             entity.Property(x => x.ModifiedAtUtc)
-                .HasColumnName("modified_at_utc")
                 .HasColumnType("timestamp with time zone")
                 .IsRequired();
         });
@@ -55,7 +56,6 @@ public class IdentityDbContext
             entity.ToTable("roles");
             
             entity.Property(x => x.Description)
-                .HasColumnName("description")
                 .IsRequired()
                 .HasMaxLength(250);
         });
@@ -84,7 +84,6 @@ public class IdentityDbContext
         {
             entity.ToTable("user_tokens");
         });
-
-
+        
     }
 }

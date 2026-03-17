@@ -6,6 +6,7 @@ public sealed class ApplicationUser : IdentityUser<Guid>
 {
     public string FirstName { get; private set; } = null!;
     public string LastName { get; private set; } = null!;
+    public DateOnly BirthDate { get; private set; }
     public bool IsActive { get; private set; } = true;
     public DateTimeOffset CreatedAtUtc { get; private set; }
     public DateTimeOffset ModifiedAtUtc { get; private set; }
@@ -19,17 +20,17 @@ public sealed class ApplicationUser : IdentityUser<Guid>
     public ApplicationUser(
         string email,
         string firstName,
-        string lastName)
+        string lastName,
+        DateOnly birthDate)
     {
         Id = Guid.NewGuid();
         
         Email = email;
         UserName = email;
-        NormalizedEmail = email.ToUpperInvariant();
-        NormalizedUserName = email.ToUpperInvariant();
         
         FirstName = firstName;
         LastName = lastName;
+        BirthDate = birthDate;
         
         CreatedAtUtc = DateTimeOffset.UtcNow;
         ModifiedAtUtc = DateTimeOffset.UtcNow;
@@ -42,6 +43,11 @@ public sealed class ApplicationUser : IdentityUser<Guid>
         FirstName = firstName;
         LastName = lastName;
         ModifiedAtUtc = DateTimeOffset.UtcNow;
+    }
+    public void UpdateBirthDate(DateOnly birthDate)
+    {
+        BirthDate = birthDate;
+        ModifiedAtUtc = DateTimeOffset.UtcNow;   
     }
     
     public void Deactivate()
