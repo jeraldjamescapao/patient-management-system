@@ -37,6 +37,29 @@ public sealed class ApplicationUser : IdentityUser<Guid>
 
         IsActive = true;
     }
+
+    public static ApplicationUser Create(
+        string email,
+        string firstName,
+        string lastName,
+        DateOnly birthDate)
+    {
+        // The guards are here to ensure validity!
+        if (string.IsNullOrWhiteSpace(email))
+            throw new ArgumentException("Email is required.");
+        if (string.IsNullOrWhiteSpace(firstName))
+            throw new ArgumentException("FirstName is required.");
+        if (string.IsNullOrWhiteSpace(lastName))
+            throw new ArgumentException("LastName is required.");
+        if (birthDate > DateOnly.FromDateTime(DateTime.UtcNow))
+            throw new ArgumentException("BirthDate cannot be in the future!");
+        
+        return new ApplicationUser(
+            email.Trim(), 
+            firstName.Trim(), 
+            lastName.Trim(), 
+            birthDate);
+    }
     
     public void UpdateName(string firstName, string lastName)
     {
