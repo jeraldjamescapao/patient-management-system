@@ -21,7 +21,9 @@ public sealed class IdentityDbContextFactory : IDesignTimeDbContextFactory<Ident
                                ?? throw new InvalidOperationException("Database connection string was not found.");
 
         var optionsBuilder = new DbContextOptionsBuilder<IdentityDbContext>();
-        optionsBuilder.UseNpgsql(connectionString);
+        optionsBuilder
+            .UseNpgsql(connectionString)
+            .UseSnakeCaseNamingConvention();
 
         return new IdentityDbContext(optionsBuilder.Options);
     }    

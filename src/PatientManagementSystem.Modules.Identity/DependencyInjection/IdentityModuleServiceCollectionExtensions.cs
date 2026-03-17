@@ -18,9 +18,12 @@ public static class IdentityModuleServiceCollectionExtensions
     {
         var connectionString = configuration.GetConnectionString("PostgreSqlConnection") 
             ?? throw new InvalidOperationException("Database connection string was not found.");
-        
+
         services.AddDbContext<IdentityDbContext>(options =>
-            options.UseNpgsql(connectionString));
+        {
+            options.UseNpgsql(connectionString)
+                .UseSnakeCaseNamingConvention();
+        });
 
         services.AddDataProtection();
         

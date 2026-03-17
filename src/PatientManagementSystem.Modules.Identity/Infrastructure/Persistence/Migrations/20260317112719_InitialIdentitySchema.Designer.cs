@@ -9,11 +9,11 @@ using PatientManagementSystem.Modules.Identity.Infrastructure.Persistence;
 
 #nullable disable
 
-namespace PatientManagementSystem.Modules.Identity.Infrastructure.Persistence.Migrations
+namespace PatientManagementSystem.Modules.Identity.Migrations
 {
     [DbContext(typeof(IdentityDbContext))]
-    [Migration("20260316211031_AddDescriptionToApplicationRole")]
-    partial class AddDescriptionToApplicationRole
+    [Migration("20260317112719_InitialIdentitySchema")]
+    partial class InitialIdentitySchema
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -30,22 +30,28 @@ namespace PatientManagementSystem.Modules.Identity.Infrastructure.Persistence.Mi
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ClaimType")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("claim_type");
 
                     b.Property<string>("ClaimValue")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("claim_value");
 
                     b.Property<Guid>("RoleId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("role_id");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_role_claims");
 
-                    b.HasIndex("RoleId");
+                    b.HasIndex("RoleId")
+                        .HasDatabaseName("ix_role_claims_role_id");
 
                     b.ToTable("role_claims", "identity");
                 });
@@ -54,22 +60,28 @@ namespace PatientManagementSystem.Modules.Identity.Infrastructure.Persistence.Mi
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ClaimType")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("claim_type");
 
                     b.Property<string>("ClaimValue")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("claim_value");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_user_claims");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_user_claims_user_id");
 
                     b.ToTable("user_claims", "identity");
                 });
@@ -77,20 +89,26 @@ namespace PatientManagementSystem.Modules.Identity.Infrastructure.Persistence.Mi
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("login_provider");
 
                     b.Property<string>("ProviderKey")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("provider_key");
 
                     b.Property<string>("ProviderDisplayName")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("provider_display_name");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
 
-                    b.HasKey("LoginProvider", "ProviderKey");
+                    b.HasKey("LoginProvider", "ProviderKey")
+                        .HasName("pk_user_logins");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_user_logins_user_id");
 
                     b.ToTable("user_logins", "identity");
                 });
@@ -98,14 +116,18 @@ namespace PatientManagementSystem.Modules.Identity.Infrastructure.Persistence.Mi
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
                 {
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
 
                     b.Property<Guid>("RoleId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("role_id");
 
-                    b.HasKey("UserId", "RoleId");
+                    b.HasKey("UserId", "RoleId")
+                        .HasName("pk_user_roles");
 
-                    b.HasIndex("RoleId");
+                    b.HasIndex("RoleId")
+                        .HasDatabaseName("ix_user_roles_role_id");
 
                     b.ToTable("user_roles", "identity");
                 });
@@ -113,18 +135,23 @@ namespace PatientManagementSystem.Modules.Identity.Infrastructure.Persistence.Mi
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
 
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("login_provider");
 
                     b.Property<string>("Name")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("name");
 
                     b.Property<string>("Value")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("value");
 
-                    b.HasKey("UserId", "LoginProvider", "Name");
+                    b.HasKey("UserId", "LoginProvider", "Name")
+                        .HasName("pk_user_tokens");
 
                     b.ToTable("user_tokens", "identity");
                 });
@@ -133,11 +160,13 @@ namespace PatientManagementSystem.Modules.Identity.Infrastructure.Persistence.Mi
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("concurrency_stamp");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -147,13 +176,16 @@ namespace PatientManagementSystem.Modules.Identity.Infrastructure.Persistence.Mi
 
                     b.Property<string>("Name")
                         .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("name");
 
                     b.Property<string>("NormalizedName")
                         .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("normalized_name");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_roles");
 
                     b.HasIndex("NormalizedName")
                         .IsUnique()
@@ -166,14 +198,21 @@ namespace PatientManagementSystem.Modules.Identity.Infrastructure.Persistence.Mi
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
 
                     b.Property<int>("AccessFailedCount")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("access_failed_count");
+
+                    b.Property<DateOnly>("BirthDate")
+                        .HasColumnType("date")
+                        .HasColumnName("birth_date");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("concurrency_stamp");
 
                     b.Property<DateTimeOffset>("CreatedAtUtc")
                         .HasColumnType("timestamp with time zone")
@@ -181,10 +220,12 @@ namespace PatientManagementSystem.Modules.Identity.Infrastructure.Persistence.Mi
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("email");
 
                     b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("boolean");
+                        .HasColumnType("boolean")
+                        .HasColumnName("email_confirmed");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
@@ -205,10 +246,12 @@ namespace PatientManagementSystem.Modules.Identity.Infrastructure.Persistence.Mi
                         .HasColumnName("last_name");
 
                     b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("boolean");
+                        .HasColumnType("boolean")
+                        .HasColumnName("lockout_enabled");
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("lockout_end");
 
                     b.Property<DateTimeOffset>("ModifiedAtUtc")
                         .HasColumnType("timestamp with time zone")
@@ -216,32 +259,41 @@ namespace PatientManagementSystem.Modules.Identity.Infrastructure.Persistence.Mi
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("normalized_email");
 
                     b.Property<string>("NormalizedUserName")
                         .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("normalized_user_name");
 
                     b.Property<string>("PasswordHash")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("password_hash");
 
                     b.Property<string>("PhoneNumber")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("phone_number");
 
                     b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("boolean");
+                        .HasColumnType("boolean")
+                        .HasColumnName("phone_number_confirmed");
 
                     b.Property<string>("SecurityStamp")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("security_stamp");
 
                     b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("boolean");
+                        .HasColumnType("boolean")
+                        .HasColumnName("two_factor_enabled");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("user_name");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_users");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -259,7 +311,8 @@ namespace PatientManagementSystem.Modules.Identity.Infrastructure.Persistence.Mi
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_role_claims_roles_role_id");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
@@ -268,7 +321,8 @@ namespace PatientManagementSystem.Modules.Identity.Infrastructure.Persistence.Mi
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_user_claims_users_user_id");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
@@ -277,7 +331,8 @@ namespace PatientManagementSystem.Modules.Identity.Infrastructure.Persistence.Mi
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_user_logins_users_user_id");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
@@ -286,13 +341,15 @@ namespace PatientManagementSystem.Modules.Identity.Infrastructure.Persistence.Mi
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_user_roles_roles_role_id");
 
                     b.HasOne("PatientManagementSystem.Modules.Identity.Domain.Users.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_user_roles_users_user_id");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
@@ -301,7 +358,8 @@ namespace PatientManagementSystem.Modules.Identity.Infrastructure.Persistence.Mi
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_user_tokens_users_user_id");
                 });
 #pragma warning restore 612, 618
         }

@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace PatientManagementSystem.Modules.Identity.Infrastructure.Persistence.Migrations
+namespace PatientManagementSystem.Modules.Identity.Migrations
 {
     /// <inheritdoc />
     public partial class InitialIdentitySchema : Migration
@@ -20,15 +20,15 @@ namespace PatientManagementSystem.Modules.Identity.Infrastructure.Persistence.Mi
                 schema: "identity",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Description = table.Column<string>(type: "text", nullable: false),
-                    Name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
-                    NormalizedName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "text", nullable: true)
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    description = table.Column<string>(type: "character varying(250)", maxLength: 250, nullable: false),
+                    name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    normalized_name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    concurrency_stamp = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_roles", x => x.Id);
+                    table.PrimaryKey("pk_roles", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -36,30 +36,31 @@ namespace PatientManagementSystem.Modules.Identity.Infrastructure.Persistence.Mi
                 schema: "identity",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
                     first_name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     last_name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    birth_date = table.Column<DateOnly>(type: "date", nullable: false),
                     is_active = table.Column<bool>(type: "boolean", nullable: false, defaultValue: true),
                     created_at_utc = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     modified_at_utc = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
-                    NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
-                    Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
-                    NormalizedEmail = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
-                    EmailConfirmed = table.Column<bool>(type: "boolean", nullable: false),
-                    PasswordHash = table.Column<string>(type: "text", nullable: true),
-                    SecurityStamp = table.Column<string>(type: "text", nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "text", nullable: true),
-                    PhoneNumber = table.Column<string>(type: "text", nullable: true),
-                    PhoneNumberConfirmed = table.Column<bool>(type: "boolean", nullable: false),
-                    TwoFactorEnabled = table.Column<bool>(type: "boolean", nullable: false),
-                    LockoutEnd = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    LockoutEnabled = table.Column<bool>(type: "boolean", nullable: false),
-                    AccessFailedCount = table.Column<int>(type: "integer", nullable: false)
+                    user_name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    normalized_user_name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    normalized_email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    email_confirmed = table.Column<bool>(type: "boolean", nullable: false),
+                    password_hash = table.Column<string>(type: "text", nullable: true),
+                    security_stamp = table.Column<string>(type: "text", nullable: true),
+                    concurrency_stamp = table.Column<string>(type: "text", nullable: true),
+                    phone_number = table.Column<string>(type: "text", nullable: true),
+                    phone_number_confirmed = table.Column<bool>(type: "boolean", nullable: false),
+                    two_factor_enabled = table.Column<bool>(type: "boolean", nullable: false),
+                    lockout_end = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    lockout_enabled = table.Column<bool>(type: "boolean", nullable: false),
+                    access_failed_count = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_users", x => x.Id);
+                    table.PrimaryKey("pk_users", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -67,21 +68,21 @@ namespace PatientManagementSystem.Modules.Identity.Infrastructure.Persistence.Mi
                 schema: "identity",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
+                    id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    RoleId = table.Column<Guid>(type: "uuid", nullable: false),
-                    ClaimType = table.Column<string>(type: "text", nullable: true),
-                    ClaimValue = table.Column<string>(type: "text", nullable: true)
+                    role_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    claim_type = table.Column<string>(type: "text", nullable: true),
+                    claim_value = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_role_claims", x => x.Id);
+                    table.PrimaryKey("pk_role_claims", x => x.id);
                     table.ForeignKey(
-                        name: "FK_role_claims_roles_RoleId",
-                        column: x => x.RoleId,
+                        name: "fk_role_claims_roles_role_id",
+                        column: x => x.role_id,
                         principalSchema: "identity",
                         principalTable: "roles",
-                        principalColumn: "Id",
+                        principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -90,21 +91,21 @@ namespace PatientManagementSystem.Modules.Identity.Infrastructure.Persistence.Mi
                 schema: "identity",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
+                    id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    ClaimType = table.Column<string>(type: "text", nullable: true),
-                    ClaimValue = table.Column<string>(type: "text", nullable: true)
+                    user_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    claim_type = table.Column<string>(type: "text", nullable: true),
+                    claim_value = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_user_claims", x => x.Id);
+                    table.PrimaryKey("pk_user_claims", x => x.id);
                     table.ForeignKey(
-                        name: "FK_user_claims_users_UserId",
-                        column: x => x.UserId,
+                        name: "fk_user_claims_users_user_id",
+                        column: x => x.user_id,
                         principalSchema: "identity",
                         principalTable: "users",
-                        principalColumn: "Id",
+                        principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -113,20 +114,20 @@ namespace PatientManagementSystem.Modules.Identity.Infrastructure.Persistence.Mi
                 schema: "identity",
                 columns: table => new
                 {
-                    LoginProvider = table.Column<string>(type: "text", nullable: false),
-                    ProviderKey = table.Column<string>(type: "text", nullable: false),
-                    ProviderDisplayName = table.Column<string>(type: "text", nullable: true),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false)
+                    login_provider = table.Column<string>(type: "text", nullable: false),
+                    provider_key = table.Column<string>(type: "text", nullable: false),
+                    provider_display_name = table.Column<string>(type: "text", nullable: true),
+                    user_id = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_user_logins", x => new { x.LoginProvider, x.ProviderKey });
+                    table.PrimaryKey("pk_user_logins", x => new { x.login_provider, x.provider_key });
                     table.ForeignKey(
-                        name: "FK_user_logins_users_UserId",
-                        column: x => x.UserId,
+                        name: "fk_user_logins_users_user_id",
+                        column: x => x.user_id,
                         principalSchema: "identity",
                         principalTable: "users",
-                        principalColumn: "Id",
+                        principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -135,25 +136,25 @@ namespace PatientManagementSystem.Modules.Identity.Infrastructure.Persistence.Mi
                 schema: "identity",
                 columns: table => new
                 {
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    RoleId = table.Column<Guid>(type: "uuid", nullable: false)
+                    user_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    role_id = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_user_roles", x => new { x.UserId, x.RoleId });
+                    table.PrimaryKey("pk_user_roles", x => new { x.user_id, x.role_id });
                     table.ForeignKey(
-                        name: "FK_user_roles_roles_RoleId",
-                        column: x => x.RoleId,
+                        name: "fk_user_roles_roles_role_id",
+                        column: x => x.role_id,
                         principalSchema: "identity",
                         principalTable: "roles",
-                        principalColumn: "Id",
+                        principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_user_roles_users_UserId",
-                        column: x => x.UserId,
+                        name: "fk_user_roles_users_user_id",
+                        column: x => x.user_id,
                         principalSchema: "identity",
                         principalTable: "users",
-                        principalColumn: "Id",
+                        principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -162,65 +163,65 @@ namespace PatientManagementSystem.Modules.Identity.Infrastructure.Persistence.Mi
                 schema: "identity",
                 columns: table => new
                 {
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    LoginProvider = table.Column<string>(type: "text", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    Value = table.Column<string>(type: "text", nullable: true)
+                    user_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    login_provider = table.Column<string>(type: "text", nullable: false),
+                    name = table.Column<string>(type: "text", nullable: false),
+                    value = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_user_tokens", x => new { x.UserId, x.LoginProvider, x.Name });
+                    table.PrimaryKey("pk_user_tokens", x => new { x.user_id, x.login_provider, x.name });
                     table.ForeignKey(
-                        name: "FK_user_tokens_users_UserId",
-                        column: x => x.UserId,
+                        name: "fk_user_tokens_users_user_id",
+                        column: x => x.user_id,
                         principalSchema: "identity",
                         principalTable: "users",
-                        principalColumn: "Id",
+                        principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_role_claims_RoleId",
+                name: "ix_role_claims_role_id",
                 schema: "identity",
                 table: "role_claims",
-                column: "RoleId");
+                column: "role_id");
 
             migrationBuilder.CreateIndex(
                 name: "RoleNameIndex",
                 schema: "identity",
                 table: "roles",
-                column: "NormalizedName",
+                column: "normalized_name",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_user_claims_UserId",
+                name: "ix_user_claims_user_id",
                 schema: "identity",
                 table: "user_claims",
-                column: "UserId");
+                column: "user_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_user_logins_UserId",
+                name: "ix_user_logins_user_id",
                 schema: "identity",
                 table: "user_logins",
-                column: "UserId");
+                column: "user_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_user_roles_RoleId",
+                name: "ix_user_roles_role_id",
                 schema: "identity",
                 table: "user_roles",
-                column: "RoleId");
+                column: "role_id");
 
             migrationBuilder.CreateIndex(
                 name: "EmailIndex",
                 schema: "identity",
                 table: "users",
-                column: "NormalizedEmail");
+                column: "normalized_email");
 
             migrationBuilder.CreateIndex(
                 name: "UserNameIndex",
                 schema: "identity",
                 table: "users",
-                column: "NormalizedUserName",
+                column: "normalized_user_name",
                 unique: true);
         }
 
