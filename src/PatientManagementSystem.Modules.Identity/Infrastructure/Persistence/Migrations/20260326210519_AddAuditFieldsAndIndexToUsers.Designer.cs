@@ -12,7 +12,7 @@ using PatientManagementSystem.Modules.Identity.Infrastructure.Persistence;
 namespace PatientManagementSystem.Modules.Identity.Migrations
 {
     [DbContext(typeof(IdentityDbContext))]
-    [Migration("20260326195410_AddAuditFieldsAndIndexToUsers")]
+    [Migration("20260326210519_AddAuditFieldsAndIndexToUsers")]
     partial class AddAuditFieldsAndIndexToUsers
     {
         /// <inheritdoc />
