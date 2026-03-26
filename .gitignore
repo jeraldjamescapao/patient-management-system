@@ -22,6 +22,11 @@ obj/
 .DS_Store
 Thumbs.db
 
+# Local secrets
+appsettings.Development.json
+appsettings.*.json
+!appsettings.json
+
 # Test results
 TestResults/
 
