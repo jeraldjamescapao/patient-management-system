@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using PatientManagementSystem.Common.Services;
 using PatientManagementSystem.Modules.Identity.Application.Abstractions.Authentication;
 using PatientManagementSystem.Modules.Identity.Application.Services;
 using PatientManagementSystem.Modules.Identity.Domain.Roles;
@@ -11,6 +12,7 @@ using PatientManagementSystem.Modules.Identity.Domain.Tokens;
 using PatientManagementSystem.Modules.Identity.Domain.Users;
 using PatientManagementSystem.Modules.Identity.Infrastructure.Persistence;
 using PatientManagementSystem.Modules.Identity.Infrastructure.Persistence.Repositories;
+using PatientManagementSystem.Modules.Identity.Infrastructure.Services;
     
 public static class IdentityModuleServiceCollectionExtensions
 {
@@ -63,6 +65,9 @@ public static class IdentityModuleServiceCollectionExtensions
             .AddRoles<ApplicationRole>()
             .AddEntityFrameworkStores<IdentityDbContext>()
             .AddDefaultTokenProviders();
+
+        services.AddHttpContextAccessor();
+        services.AddScoped<ICurrentUserService, CurrentUserService>();
         
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();

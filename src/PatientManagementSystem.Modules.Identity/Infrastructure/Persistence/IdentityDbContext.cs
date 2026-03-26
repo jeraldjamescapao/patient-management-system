@@ -50,6 +50,17 @@ public class IdentityDbContext
             entity.Property(x => x.ModifiedAtUtc)
                 .HasColumnType("timestamp with time zone")
                 .IsRequired();
+            
+            entity.Property(x => x.CreatedBy)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            entity.Property(x => x.ModifiedBy)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            entity.HasIndex(x => x.IsActive)
+                .HasDatabaseName("ix_users_is_active");
         });
 
         builder.Entity<ApplicationRole>(entity =>
