@@ -41,7 +41,7 @@ internal sealed class RefreshTokenRepository : IRefreshTokenRepository
     public async Task DeleteExpiredAsync(CancellationToken ct = default)
     {
         await _context.RefreshTokens
-            .Where(t => t.ExpiresAtUtc < DateTimeOffset.UtcNow && t.IsRevoked)
+            .Where(t => t.ExpiresAtUtc < DateTimeOffset.UtcNow)
             .ExecuteDeleteAsync(ct);
     }
 
