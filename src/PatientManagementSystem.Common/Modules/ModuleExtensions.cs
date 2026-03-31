@@ -7,14 +7,12 @@ namespace PatientManagementSystem.Common.Modules;
 
 public static class ModuleExtensions
 {
-    private static readonly List<IModule> Modules = [];
-
     public static IServiceCollection RegisterModules(
         this IServiceCollection services,
         IConfiguration configuration,
         params Assembly[] assemblies)
     {
-        Modules.Clear();
+        var registry = new ModuleRegistry();
 
         var moduleTypes = assemblies
             .SelectMany(assembly => assembly.GetTypes())
@@ -25,18 +23,22 @@ public static class ModuleExtensions
         {
             var module = (IModule)Activator.CreateInstance(moduleType)!;
             module.RegisterModule(services, configuration);
-
-            services.AddControllers()
-                .AddApplicationPart(moduleType.Assembly);
-
-            Modules.Add(module);
+            services.AddControllers().AddApplicationPart(moduleType.Assembly);
+            registry.Register(module);
         }
+        
+        services.AddSingleton(registry);
         
         return services;
     }
 
     public static WebApplication MapModuleEndpoints(this WebApplication app)
     {
-        return Modules.Aggregate(app, (current, module) => module.MapEndpoints(current));
+        var registry = app.Services.GetRequiredService<ModuleRegistry>();
+        
+        foreach (var module in registry.Modules)
+            module.MapEndpoints(app);
+                
+        return app;
     }
 }

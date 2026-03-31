@@ -7,7 +7,7 @@ using PatientManagementSystem.Modules.Identity.Domain.Roles;
 using PatientManagementSystem.Modules.Identity.Domain.Tokens; 
 using PatientManagementSystem.Modules.Identity.Domain.Users;
 
-public class IdentityDbContext 
+internal class IdentityDbContext 
     : IdentityDbContext<ApplicationUser, ApplicationRole, Guid>
 {
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();

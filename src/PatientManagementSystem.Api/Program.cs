@@ -23,14 +23,23 @@ builder.Services.AddOptions<FrontendSettings>()
 
 var app = builder.Build();
 
-await IdentityRoleSeeder.SeedAsync(app.Services);
-
-app.UseMiddleware<ExceptionHandlingMiddleware>();
+try
+{
+    await IdentityRoleSeeder.SeedAsync(app.Services);
+}
+catch (Exception ex)
+{
+    var logger = app.Services.GetRequiredService<ILogger<Program>>();
+    logger.LogCritical(ex, "Application failed to start due to Identity Role seeding error.");
+    throw;
+}
 
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseHttpsRedirection();
 app.UseAuthentication();

@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 
-public sealed class IdentityDbContextFactory : IDesignTimeDbContextFactory<IdentityDbContext>
+internal sealed class IdentityDbContextFactory : IDesignTimeDbContextFactory<IdentityDbContext>
 {
     public IdentityDbContext CreateDbContext(string[] args)
     {
