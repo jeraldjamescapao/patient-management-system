@@ -30,7 +30,7 @@ public static class IdentityModuleServiceCollectionExtensions
 
         services.AddIdentityPersistence(connectionString);
         services.AddIdentityServices();
-        services.AddIdentityAuthentication(configuration);
+        services.AddIdentityJwt(configuration);
         
         return services;
     }
@@ -44,6 +44,8 @@ public static class IdentityModuleServiceCollectionExtensions
             options.UseNpgsql(connectionString)
                 .UseSnakeCaseNamingConvention();
         });
+        
+        services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
         
         return services;
     }
@@ -75,12 +77,11 @@ public static class IdentityModuleServiceCollectionExtensions
         services.AddHttpContextAccessor();
         services.AddScoped<ICurrentUserService, CurrentUserService>();
         services.AddScoped<IAuthService, AuthService>();
-        services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
         
         return services;       
     }
 
-    private static IServiceCollection AddIdentityAuthentication(
+    private static IServiceCollection AddIdentityJwt(
         this IServiceCollection services,
         IConfiguration configuration)
     {

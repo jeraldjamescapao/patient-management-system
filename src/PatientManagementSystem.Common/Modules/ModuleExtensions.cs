@@ -17,7 +17,8 @@ public static class ModuleExtensions
         var moduleTypes = assemblies
             .SelectMany(assembly => assembly.GetTypes())
             .Where(type => typeof(IModule).IsAssignableFrom(type)
-                           && type is { IsAbstract: false, IsInterface: false });
+                           && type is { IsAbstract: false, IsInterface: false }
+                           && !type.IsDefined(typeof(SkipAutoDiscoveryAttribute), inherit: false));
 
         foreach (var moduleType in moduleTypes)
         {

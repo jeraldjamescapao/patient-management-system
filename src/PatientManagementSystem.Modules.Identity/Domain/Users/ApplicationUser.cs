@@ -16,8 +16,12 @@ public sealed class ApplicationUser : IdentityUser<Guid>, IAuditableEntity
     public string ModifiedBy { get; private set; } = null!;
 
     public string FullName => $"{FirstName} {LastName}";
-    public string FullNameWithInitials => $"{FirstName[..1]}. {LastName}";
     public string FullNameInverted => $"{LastName}, {FirstName}";
+    
+    public string FullNameWithInitials =>
+        !string.IsNullOrEmpty(FirstName)
+            ? $"{FirstName[..1]}. {LastName}"
+            : throw new InvalidOperationException("Cannot compute initials: FirstName is null or empty.");
 
     private ApplicationUser() { }
 

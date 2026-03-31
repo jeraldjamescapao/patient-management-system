@@ -8,30 +8,29 @@ using PatientManagementSystem.Common.Results;
 [ApiController]
 public abstract class BaseApiController : ControllerBase
 {
+    private static readonly IReadOnlyDictionary<ResultErrorType, int> StatusCodeMap =
+        new Dictionary<ResultErrorType, int>
+        {
+            [ResultErrorType.Validation]          = StatusCodes.Status400BadRequest,
+            [ResultErrorType.Unauthorized]        = StatusCodes.Status401Unauthorized,
+            [ResultErrorType.Forbidden]           = StatusCodes.Status403Forbidden,
+            [ResultErrorType.NotFound]            = StatusCodes.Status404NotFound,
+            [ResultErrorType.Conflict]            = StatusCodes.Status409Conflict,
+            [ResultErrorType.UnprocessableEntity] = StatusCodes.Status422UnprocessableEntity,
+            [ResultErrorType.Internal]            = StatusCodes.Status500InternalServerError,
+            [ResultErrorType.ServiceUnavailable]  = StatusCodes.Status503ServiceUnavailable,
+        };
+    
     protected IActionResult ToActionResult<T>(Result<T> result)
     {
         if (result.IsSuccess) 
             return StatusCode(StatusCodes.Status200OK, result.Value);
 
-        var error = new
-        {
-            code = result.Error!.Code,
-            message = result.Error.Message
-        };
+        var error = new { code = result.Error!.Code, message = result.Error.Message };
         
-        var objectResult =  result.ErrorType switch
-        {
-            ResultErrorType.Validation          => StatusCode(StatusCodes.Status400BadRequest, error),
-            ResultErrorType.Unauthorized        => StatusCode(StatusCodes.Status401Unauthorized, error),
-            ResultErrorType.Forbidden           => StatusCode(StatusCodes.Status403Forbidden, error),
-            ResultErrorType.NotFound            => StatusCode(StatusCodes.Status404NotFound, error),
-            ResultErrorType.Conflict            => StatusCode(StatusCodes.Status409Conflict, error),
-            ResultErrorType.UnprocessableEntity => StatusCode(StatusCodes.Status422UnprocessableEntity, error),
-            ResultErrorType.Internal            => StatusCode(StatusCodes.Status500InternalServerError, error),
-            ResultErrorType.ServiceUnavailable  => StatusCode(StatusCodes.Status503ServiceUnavailable, error),
-            _ => throw new InvalidOperationException($"Unhandled error type: {result.ErrorType}.")
-        };
-        
-        return objectResult;
+        if (!StatusCodeMap.TryGetValue(result.ErrorType, out var statusCode))
+            throw new InvalidOperationException($"Unhandled error type: {result.ErrorType}.");
+
+        return StatusCode(statusCode, error);
     }
 }
