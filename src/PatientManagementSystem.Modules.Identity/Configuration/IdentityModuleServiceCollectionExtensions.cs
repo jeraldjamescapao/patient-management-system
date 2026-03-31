@@ -26,7 +26,7 @@ public static class IdentityModuleServiceCollectionExtensions
 
         services.AddIdentityPersistence(connectionString);
         services.AddIdentityServices();
-        services.AddApiVersioning();
+        services.AddIdentityApiVersioning();
         
         return services;
     }
