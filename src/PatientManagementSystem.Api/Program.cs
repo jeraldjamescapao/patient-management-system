@@ -1,5 +1,7 @@
+using PatientManagementSystem.Common.Configuration;
 using PatientManagementSystem.Common.Middleware;
 using PatientManagementSystem.Common.Modules;
+using PatientManagementSystem.Infrastructure;
 using PatientManagementSystem.Modules.Identity;
 using PatientManagementSystem.Modules.Identity.Infrastructure.Persistence;
 
@@ -11,6 +13,13 @@ builder.Services.AddApiVersioning().AddMvc();
 builder.Services.RegisterModules(
     builder.Configuration,
     typeof(IdentityModule).Assembly);
+
+builder.Services.AddInfrastructure(builder.Configuration);
+
+builder.Services.AddOptions<FrontendSettings>()
+    .BindConfiguration(FrontendSettings.SectionName)
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
 
 var app = builder.Build();
 

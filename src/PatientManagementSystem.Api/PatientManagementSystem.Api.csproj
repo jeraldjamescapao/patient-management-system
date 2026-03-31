@@ -17,6 +17,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\PatientManagementSystem.Infrastructure\PatientManagementSystem.Infrastructure.csproj" />
       <ProjectReference Include="..\PatientManagementSystem.Modules.Identity\PatientManagementSystem.Modules.Identity.csproj" />
     </ItemGroup>
 

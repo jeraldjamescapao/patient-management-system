@@ -23,6 +23,11 @@ public sealed class ExceptionHandlingMiddleware
         {
             await _next(httpContext);
         }
+        catch (OperationCanceledException) when (httpContext.RequestAborted.IsCancellationRequested)
+        {
+            // Client disconnected...
+            httpContext.Response.StatusCode = 499;
+        }
         catch (Exception exception)
         {
             ApiLogMessages.UnhandledException(
