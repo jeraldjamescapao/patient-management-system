@@ -33,7 +33,7 @@ public sealed class AuthController : BaseApiController
 
     [HttpPost("register")]
     public async Task<IActionResult> RegisterAsync(
-        [FromBody] RegisterRequest request, CancellationToken ct = default)
+        [FromBody] RegisterRequest request, CancellationToken ct)
     {
         var result = await _authService.RegisterAsync(request, ct);
         if (result.IsFailure) return ToActionResult(result);
@@ -44,7 +44,7 @@ public sealed class AuthController : BaseApiController
 
     [HttpPost("login")]
     public async Task<IActionResult> LoginAsync(
-        [FromBody] LoginRequest request, CancellationToken ct = default)
+        [FromBody] LoginRequest request, CancellationToken ct)
     {
         var result = await _authService.LoginAsync(request, ct);
         if (result.IsFailure) return ToActionResult(result);
@@ -54,7 +54,7 @@ public sealed class AuthController : BaseApiController
     }
     
     [HttpPost("refresh")]
-    public async Task<IActionResult> RefreshAsync(CancellationToken ct = default)
+    public async Task<IActionResult> RefreshAsync(CancellationToken ct)
     {
         var token = Request.Cookies[CookieNames.RefreshToken] ?? string.Empty;
         var result = await _authService.RefreshAsync(token, ct);
@@ -65,7 +65,7 @@ public sealed class AuthController : BaseApiController
     }
     
     [HttpPost("logout")]
-    public async Task<IActionResult> LogoutAsync(CancellationToken ct = default)
+    public async Task<IActionResult> LogoutAsync(CancellationToken ct)
     {
         var token = Request.Cookies[CookieNames.RefreshToken] ?? string.Empty;
         var result = await _authService.LogoutAsync(token, ct);
@@ -77,7 +77,7 @@ public sealed class AuthController : BaseApiController
 
     [Authorize]
     [HttpPost("logout-all")]
-    public async Task<IActionResult> LogoutAllAsync(CancellationToken ct = default)
+    public async Task<IActionResult> LogoutAllAsync(CancellationToken ct)
     {
         if (!Guid.TryParse(_currentUserService.UserId, out var userId))
             return ToActionResult(Result<bool>.Unauthorized(AuthErrors.InvalidCredentials));

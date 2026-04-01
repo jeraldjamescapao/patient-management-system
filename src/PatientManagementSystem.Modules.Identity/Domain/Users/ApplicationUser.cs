@@ -23,7 +23,7 @@ public sealed class ApplicationUser : IdentityUser<Guid>, IAuditableEntity
     public string FullNameWithInitials =>
         !string.IsNullOrEmpty(FirstName)
             ? $"{FirstName[..1]}. {LastName}"
-            : throw new InvalidOperationException("Cannot compute initials: FirstName is null or empty.");
+            : LastName;
 
     private ApplicationUser() { }
 
