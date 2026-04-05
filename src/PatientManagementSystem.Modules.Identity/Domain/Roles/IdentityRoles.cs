@@ -6,5 +6,5 @@ public static class IdentityRoles
     public const string Patient = "Patient";
     public const string Doctor = "Doctor";
     
-    public static readonly string[] All = [Admin, Patient, Doctor];
+    public static readonly IReadOnlyList<string> All = [Admin, Patient, Doctor];
 }
