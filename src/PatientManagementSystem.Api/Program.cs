@@ -4,49 +4,64 @@ using PatientManagementSystem.Common.Modules;
 using PatientManagementSystem.Infrastructure;
 using PatientManagementSystem.Modules.Identity;
 using PatientManagementSystem.Modules.Identity.Infrastructure.Persistence;
+using Serilog;
 
-var builder = WebApplication.CreateBuilder(args);
-
-builder.Services.AddOpenApi();
-builder.Services.AddApiVersioning().AddMvc();
-
-builder.Services.RegisterModules(
-    builder.Configuration,
-    typeof(IdentityModule).Assembly);
-
-builder.Services.AddInfrastructure(builder.Configuration);
-
-builder.Services.AddOptions<FrontendSettings>()
-    .BindConfiguration(FrontendSettings.SectionName)
-    .ValidateDataAnnotations()
-    .ValidateOnStart();
-
-var app = builder.Build();
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .CreateBootstrapLogger();
 
 try
 {
+    Log.Information("Starting Jerald James Capao's humble Patient Management System...");
+    
+    var builder = WebApplication.CreateBuilder(args);
+    
+    builder.Services.AddSerilog((services, loggerConfiguration) 
+        => loggerConfiguration
+            .ReadFrom.Configuration(builder.Configuration)
+            .ReadFrom.Services(services));
+    
+    builder.Services.AddOpenApi();
+    builder.Services.AddApiVersioning().AddMvc();
+    
+    builder.Services.RegisterModules(
+        builder.Configuration,
+        typeof(IdentityModule).Assembly);
+
+    builder.Services.AddInfrastructure(builder.Configuration);
+
+    builder.Services.AddOptions<FrontendSettings>()
+        .BindConfiguration(FrontendSettings.SectionName)
+        .ValidateDataAnnotations()
+        .ValidateOnStart();
+
+    var app = builder.Build();
+    
     await IdentityRoleSeeder.SeedAsync(app.Services);
+    
+    if (app.Environment.IsDevelopment())
+    {
+        app.MapOpenApi();
+    }
+
+    app.UseMiddleware<ExceptionHandlingMiddleware>();
+    app.UseSerilogRequestLogging();
+    
+    app.UseHttpsRedirection();
+    app.UseAuthentication();
+    app.UseAuthorization();
+
+    app.MapGet("/", () => "Bonjour! Welcome to Jerald James Capao's humble Patient Management System API! :)");
+    app.MapControllers();
+    app.MapModuleEndpoints();
+
+    app.Run();
 }
 catch (Exception ex)
 {
-    var logger = app.Services.GetRequiredService<ILogger<Program>>();
-    logger.LogCritical(ex, "Application failed to start due to Identity Role seeding error.");
-    throw;
+    Log.Fatal(ex, "Application terminated unexpectedly");
 }
-
-if (app.Environment.IsDevelopment())
+finally
 {
-    app.MapOpenApi();
+    Log.CloseAndFlush();
 }
-
-app.UseMiddleware<ExceptionHandlingMiddleware>();
-
-app.UseHttpsRedirection();
-app.UseAuthentication();
-app.UseAuthorization();
-
-app.MapGet("/", () => "Hello, this is James! Welcome to my humble Patient Management System API! :)");
-app.MapControllers();
-app.MapModuleEndpoints();
-
-app.Run();
