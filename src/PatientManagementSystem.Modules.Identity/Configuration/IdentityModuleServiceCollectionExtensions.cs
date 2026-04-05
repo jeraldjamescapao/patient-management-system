@@ -10,6 +10,7 @@ using PatientManagementSystem.Common.Configuration;
 using PatientManagementSystem.Common.Services;
 using PatientManagementSystem.Modules.Identity.Application.Abstractions.Authentication;
 using PatientManagementSystem.Modules.Identity.Application.Abstractions.Email;
+using PatientManagementSystem.Modules.Identity.Application.Abstractions.Persistence;
 using PatientManagementSystem.Modules.Identity.Application.Services;
 using PatientManagementSystem.Modules.Identity.Domain.Roles;
 using PatientManagementSystem.Modules.Identity.Domain.Tokens;
@@ -54,6 +55,7 @@ public static class IdentityModuleServiceCollectionExtensions
         });
         
         services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+        services.AddScoped<IIdentityUnitOfWork, IdentityUnitOfWork>();
         
         return services;
     }

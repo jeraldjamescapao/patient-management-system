@@ -7,11 +7,11 @@ using PatientManagementSystem.Common.Exceptions;
 using PatientManagementSystem.Common.Results;
 using PatientManagementSystem.Modules.Identity.Application.Abstractions.Authentication;
 using PatientManagementSystem.Modules.Identity.Application.Abstractions.Email;
+using PatientManagementSystem.Modules.Identity.Application.Abstractions.Persistence;
 using PatientManagementSystem.Modules.Identity.Application.Contracts.Authentication;
 using PatientManagementSystem.Modules.Identity.Configuration;
 using PatientManagementSystem.Modules.Identity.Domain.Users;
 using PatientManagementSystem.Modules.Identity.Domain.Tokens;
-using PatientManagementSystem.Modules.Identity.Infrastructure.Persistence;
 using System.Text;
 
 internal sealed class AuthService : IAuthService
@@ -20,7 +20,7 @@ internal sealed class AuthService : IAuthService
     private readonly IJwtTokenService _jwtTokenService;
     private readonly IRefreshTokenRepository _refreshTokenRepository;
     private readonly IIdentityEmailService _identityEmailService;
-    private readonly IdentityDbContext _dbContext;
+    private readonly IIdentityUnitOfWork _unitOfWork;
     private readonly JwtSettings _jwtSettings;
 
     public AuthService(
@@ -28,14 +28,14 @@ internal sealed class AuthService : IAuthService
         IJwtTokenService jwtTokenService,
         IRefreshTokenRepository refreshTokenRepository,
         IIdentityEmailService identityEmailService,
-        IdentityDbContext dbContext,
+        IIdentityUnitOfWork unitOfWork,
         IOptions<JwtSettings> jwtSettings)
     {
         _userManager = userManager;
         _jwtTokenService = jwtTokenService;
         _refreshTokenRepository = refreshTokenRepository;
         _identityEmailService = identityEmailService;
-        _dbContext = dbContext;
+        _unitOfWork = unitOfWork;
         _jwtSettings = jwtSettings.Value;
     }
     
@@ -53,7 +53,7 @@ internal sealed class AuthService : IAuthService
             request.BirthDate,
             createdBy: ApplicationUser.SelfRegisteredActor);
         
-        await using var transaction = await _dbContext.Database.BeginTransactionAsync(ct);
+        await using var transaction = await _unitOfWork.BeginTransactionAsync(ct);
         try
         {
             var createResult = await _userManager.CreateAsync(user, request.Password);
