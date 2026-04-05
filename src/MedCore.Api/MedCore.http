@@ -1,0 +1,6 @@
+@MedCore_HostAddress = https://localhost:7212
+
+GET {{MedCore_HostAddress}}/
+Accept: text
+
+###

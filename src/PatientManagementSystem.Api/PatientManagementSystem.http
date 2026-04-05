@@ -1,6 +1,0 @@
-@PatientManagementSystem_HostAddress = https://localhost:7212
-
-GET {{PatientManagementSystem_HostAddress}}/
-Accept: text
-
-###
