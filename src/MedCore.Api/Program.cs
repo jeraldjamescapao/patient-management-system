@@ -4,6 +4,7 @@ using MedCore.Common.Modules;
 using MedCore.Infrastructure;
 using MedCore.Modules.Identity;
 using MedCore.Modules.Identity.Infrastructure.Persistence;
+using Scalar.AspNetCore;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -12,7 +13,7 @@ Log.Logger = new LoggerConfiguration()
 
 try
 {
-    Log.Information("Starting Jerald James Capao's humble MedCore API...");
+    Log.Information("Starting MedCore API by Jerald James Capao...");
     
     var builder = WebApplication.CreateBuilder(args);
     
@@ -43,6 +44,11 @@ try
     if (app.Environment.IsDevelopment())
     {
         app.MapOpenApi();
+        app.MapScalarApiReference(options =>
+        {
+            options.WithTitle("MedCore API by Jerald James Capao");
+            options.WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
+        });
     }
 
     app.UseMiddleware<ExceptionHandlingMiddleware>();
@@ -52,7 +58,7 @@ try
     app.UseAuthentication();
     app.UseAuthorization();
 
-    app.MapGet("/", () => "Bonjour! Welcome to Jerald James Capao's humble MedCore API! :)");
+    app.MapGet("/", () => "Bonjour! Welcome to MedCore API, by Jerald James Capao. :)");
     app.MapControllers();
     app.MapModuleEndpoints();
 
