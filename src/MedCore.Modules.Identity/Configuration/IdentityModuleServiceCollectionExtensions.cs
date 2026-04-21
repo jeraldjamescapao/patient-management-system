@@ -16,6 +16,7 @@ using MedCore.Modules.Identity.Domain.Roles;
 using MedCore.Modules.Identity.Domain.Tokens;
 using MedCore.Modules.Identity.Domain.Users;
 using MedCore.Modules.Identity.Infrastructure.Authentication;
+using MedCore.Modules.Identity.Infrastructure.BackgroundServices;
 using MedCore.Modules.Identity.Infrastructure.Email;
 using MedCore.Modules.Identity.Infrastructure.Persistence;
 using MedCore.Modules.Identity.Infrastructure.Persistence.Repositories;
@@ -105,6 +106,13 @@ public static class IdentityModuleServiceCollectionExtensions
 
             options.TokenLifespan = TimeSpan.FromHours(tokenSettings.EmailConfirmationExpirationInHours);
         });
+        
+        services.AddOptions<RefreshTokenCleanupSettings>()
+            .BindConfiguration(RefreshTokenCleanupSettings.SectionName)
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
+
+        services.AddHostedService<RefreshTokenCleanupService>();
         
         return services;       
     }
