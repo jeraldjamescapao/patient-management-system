@@ -13,6 +13,7 @@ using MedCore.Modules.Identity.Configuration;
 using MedCore.Modules.Identity.Domain.Roles;
 using MedCore.Modules.Identity.Domain.Tokens;
 using MedCore.Modules.Identity.Domain.Users;
+using System.Security.Cryptography;
 using System.Text;
 
 internal sealed class AuthService : IAuthService
@@ -140,7 +141,7 @@ internal sealed class AuthService : IAuthService
         if (string.IsNullOrWhiteSpace(refreshToken))
             return Result<RefreshResponse>.Unauthorized(AuthErrors.InvalidRefreshToken);
 
-        var existingToken = await _refreshTokenRepository.GetByTokenAsync(refreshToken, ct);
+        var existingToken = await _refreshTokenRepository.GetByTokenAsync(HashToken(refreshToken), ct);
         if (existingToken is null)
             return Result<RefreshResponse>.Unauthorized(AuthErrors.InvalidRefreshToken);
 
@@ -258,7 +259,7 @@ internal sealed class AuthService : IAuthService
         var refreshToken = RefreshToken.Create(
             user.Id,
             Guid.NewGuid(),
-            rawRefreshToken,
+            HashToken(rawRefreshToken),
             DateTimeOffset.UtcNow.AddDays(_jwtSettings.RefreshTokenExpirationInDays));
 
         await _refreshTokenRepository.AddAsync(refreshToken, ct);
@@ -277,5 +278,11 @@ internal sealed class AuthService : IAuthService
     {
         var bytes = WebEncoders.Base64UrlDecode(token);
         return Encoding.UTF8.GetString(bytes);
+    }
+    
+    private static string HashToken(string rawToken)
+    {
+        var bytes = SHA256.HashData(Encoding.UTF8.GetBytes(rawToken));
+        return Convert.ToHexString(bytes).ToLowerInvariant();
     }
 }
