@@ -2,6 +2,7 @@ namespace MedCore.Modules.Identity.Application.Services;
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MedCore.Common.Exceptions;
 using MedCore.Common.Results;
@@ -9,6 +10,7 @@ using MedCore.Modules.Identity.Application.Abstractions.Authentication;
 using MedCore.Modules.Identity.Application.Abstractions.Email;
 using MedCore.Modules.Identity.Application.Abstractions.Persistence;
 using MedCore.Modules.Identity.Application.Contracts.Authentication;
+using MedCore.Modules.Identity.Application.Logging;
 using MedCore.Modules.Identity.Configuration;
 using MedCore.Modules.Identity.Domain.Roles;
 using MedCore.Modules.Identity.Domain.Tokens;
@@ -24,6 +26,7 @@ internal sealed class AuthService : IAuthService
     private readonly IIdentityEmailService _identityEmailService;
     private readonly IIdentityUnitOfWork _unitOfWork;
     private readonly JwtSettings _jwtSettings;
+    private readonly ILogger<AuthService> _logger;
 
     public AuthService(
         UserManager<ApplicationUser> userManager,
@@ -31,7 +34,8 @@ internal sealed class AuthService : IAuthService
         IRefreshTokenRepository refreshTokenRepository,
         IIdentityEmailService identityEmailService,
         IIdentityUnitOfWork unitOfWork,
-        IOptions<JwtSettings> jwtSettings)
+        IOptions<JwtSettings> jwtSettings,
+        ILogger<AuthService> logger)
     {
         _userManager = userManager;
         _jwtTokenService = jwtTokenService;
@@ -39,6 +43,7 @@ internal sealed class AuthService : IAuthService
         _identityEmailService = identityEmailService;
         _unitOfWork = unitOfWork;
         _jwtSettings = jwtSettings.Value;
+        _logger = logger;
     }
     
     public async Task<Result<RegisterResponse>> RegisterAsync(
@@ -46,8 +51,11 @@ internal sealed class AuthService : IAuthService
     {
         var existingUser = await _userManager.FindByEmailAsync(request.Email);
         if (existingUser is not null)
+        {
+            AuthLogMessages.RegisterEmailConflict(_logger, request.Email, null);
             return Result<RegisterResponse>.Conflict(AuthErrors.EmailAlreadyRegistered);
-
+        }
+        
         var user = ApplicationUser.Create(
             request.Email,
             request.FirstName,
@@ -62,6 +70,7 @@ internal sealed class AuthService : IAuthService
             if (!createResult.Succeeded)
             {
                 await transaction.RollbackAsync(ct);
+                AuthLogMessages.RegisterFailed(_logger, request.Email, null);
                 return Result<RegisterResponse>.Internal(AuthErrors.RegistrationFailed);
             }
             
@@ -71,6 +80,7 @@ internal sealed class AuthService : IAuthService
             if (!roleResult.Succeeded)
             {
                 await transaction.RollbackAsync(ct);
+                AuthLogMessages.RegisterRoleAssignmentFailed(_logger, request.Email, null);
                 return Result<RegisterResponse>.Internal(AuthErrors.RoleAssignmentFailed);
             }
             
@@ -81,6 +91,8 @@ internal sealed class AuthService : IAuthService
             await _identityEmailService.SendConfirmationEmailAsync(user, encodedToken, ct);
             
             await transaction.CommitAsync(ct);
+            
+            AuthLogMessages.RegisterSucceeded(_logger, user.Id, user.Email!, null);
             
             return Result<RegisterResponse>.Success(new RegisterResponse(
                 user.Id,
@@ -95,6 +107,7 @@ internal sealed class AuthService : IAuthService
         catch (EmailDeliveryException)
         {
             await transaction.RollbackAsync(ct);
+            AuthLogMessages.RegisterEmailDeliveryFailed(_logger, request.Email, null);
             return Result<RegisterResponse>.ServiceUnavailable(AuthErrors.EmailDeliveryFailed);
         }
         catch
@@ -109,20 +122,34 @@ internal sealed class AuthService : IAuthService
     {
         var user = await _userManager.FindByEmailAsync(request.Email);
         if (user is null)
+        {
+            AuthLogMessages.LoginUserNotFound(_logger, request.Email, null);
             return Result<LoginResponse>.Unauthorized(AuthErrors.InvalidCredentials);
+        }
 
         if (!user.IsActive)
+        {
+            AuthLogMessages.LoginAccountDeactivated(_logger, user.Id, null);
             return Result<LoginResponse>.Unauthorized(AuthErrors.AccountDeactivated);
+        }
 
         if (!user.EmailConfirmed)
+        {
+            AuthLogMessages.LoginEmailNotConfirmed(_logger, user.Id, null);
             return Result<LoginResponse>.UnprocessableEntity(AuthErrors.EmailNotConfirmed);
+        }
 
         var passwordValid = await _userManager.CheckPasswordAsync(user, request.Password);
         if (!passwordValid)
+        {
+            AuthLogMessages.LoginInvalidPassword(_logger, user.Id, null);
             return Result<LoginResponse>.Unauthorized(AuthErrors.InvalidCredentials);
+        }
 
         var roles = await _userManager.GetRolesAsync(user);
         var (accessToken, rawRefreshToken) = await IssueTokenPairAsync(user, roles, ct);
+        
+        AuthLogMessages.LoginSucceeded(_logger, user.Id, user.Email!, null);
         
         return Result<LoginResponse>.Success(new LoginResponse(
             user.Id,
@@ -139,11 +166,17 @@ internal sealed class AuthService : IAuthService
         string refreshToken, CancellationToken ct = default)
     {
         if (string.IsNullOrWhiteSpace(refreshToken))
+        {
+            AuthLogMessages.RefreshTokenMissing(_logger, null);
             return Result<RefreshResponse>.Unauthorized(AuthErrors.InvalidRefreshToken);
+        }
 
         var existingToken = await _refreshTokenRepository.GetByTokenAsync(HashToken(refreshToken), ct);
         if (existingToken is null)
+        {
+            AuthLogMessages.RefreshTokenNotFound(_logger, null);
             return Result<RefreshResponse>.Unauthorized(AuthErrors.InvalidRefreshToken);
+        }
 
         if (!existingToken.IsActive)
         {
@@ -153,16 +186,21 @@ internal sealed class AuthService : IAuthService
             if (existingToken.ReplacedByTokenId is not null)
             {
                 await _refreshTokenRepository.RevokeAllForUserAsync(existingToken.UserId, ct);
+                AuthLogMessages.RefreshTokenReuseDetected(_logger, existingToken.UserId, null);
                 return Result<RefreshResponse>.Unauthorized(AuthErrors.TokenReuseDetected);
             }
 
+            AuthLogMessages.RefreshTokenExpiredOrRevoked(_logger, null);
             return Result<RefreshResponse>.Unauthorized(AuthErrors.TokenExpiredOrRevoked);
         }
         
         var user = await _userManager.FindByIdAsync(existingToken.UserId.ToString());
         if (user is null || !user.IsActive)
+        {
+            AuthLogMessages.RefreshTokenUserInvalid(_logger, existingToken.UserId, null);
             return Result<RefreshResponse>.Unauthorized(AuthErrors.UserNotFoundOrInactive);
-
+        }
+        
         var roles = await _userManager.GetRolesAsync(user);
         var newAccessToken = _jwtTokenService.GenerateAccessToken(user, roles);
         var newRawRefreshToken = _jwtTokenService.GenerateRefreshToken();
@@ -179,6 +217,8 @@ internal sealed class AuthService : IAuthService
         await _refreshTokenRepository.AddAsync(newRefreshToken, ct);
         await _refreshTokenRepository.SaveChangesAsync(ct);
         
+        AuthLogMessages.RefreshSucceeded(_logger, user.Id, null);
+        
         return Result<RefreshResponse>.Success(new RefreshResponse(newAccessToken)
         {
             RawRefreshToken = newRawRefreshToken
@@ -189,14 +229,24 @@ internal sealed class AuthService : IAuthService
         string refreshToken, CancellationToken ct = default)
     {
         if (string.IsNullOrWhiteSpace(refreshToken))
+        {
+            AuthLogMessages.LogoutTokenMissingOrInactive(_logger, null);
             return Result<bool>.Success(true);
+        }
         
         var existingToken = await _refreshTokenRepository.GetByTokenAsync(HashToken(refreshToken), ct);
         if (existingToken is null || !existingToken.IsActive)
+        {
+            AuthLogMessages.LogoutTokenMissingOrInactive(_logger, null);
             return Result<bool>.Success(true);
+        }
+        
+        var userId = existingToken.UserId;
         
         existingToken.Revoke();
         await _refreshTokenRepository.SaveChangesAsync(ct);
+        
+        AuthLogMessages.LogoutSucceeded(_logger, userId, null);
         
         return Result<bool>.Success(true);
     }
@@ -205,6 +255,9 @@ internal sealed class AuthService : IAuthService
         Guid userId, CancellationToken ct = default)
     {
         await _refreshTokenRepository.RevokeAllForUserAsync(userId, ct);
+        
+        AuthLogMessages.LogoutAllSucceeded(_logger, userId, null);
+        
         return Result<bool>.Success(true);
     }
 
@@ -213,15 +266,26 @@ internal sealed class AuthService : IAuthService
     {
         var user = await _userManager.FindByIdAsync(userId.ToString());
         if (user is null)
+        {
+            AuthLogMessages.ConfirmEmailUserNotFound(_logger, userId, null);
             return Result<bool>.NotFound(AuthErrors.UserNotFound);
-        
+        }
+
         if (user.EmailConfirmed)
+        {
+            AuthLogMessages.ConfirmEmailAlreadyConfirmed(_logger, userId, null);
             return Result<bool>.Conflict(AuthErrors.EmailAlreadyConfirmed);
+        }
         
         var decodedToken = DecodeToken(token);
         var result = await _userManager.ConfirmEmailAsync(user, decodedToken);
         if (!result.Succeeded)
+        {
+            AuthLogMessages.ConfirmEmailInvalidToken(_logger, userId, null);
             return Result<bool>.UnprocessableEntity(AuthErrors.InvalidConfirmationToken);
+        }
+        
+        AuthLogMessages.ConfirmEmailSucceeded(_logger, userId, null);
         
         return Result<bool>.Success(true);
     }
@@ -242,8 +306,11 @@ internal sealed class AuthService : IAuthService
         }
         catch (EmailDeliveryException)
         {
+            AuthLogMessages.ResendConfirmationEmailDeliveryFailed(_logger, null);
             return Result<bool>.ServiceUnavailable(AuthErrors.EmailDeliveryFailed);
         }
+        
+        AuthLogMessages.ResendConfirmationSucceeded(_logger, user.Id, null);
 
         return Result<bool>.Success(true);
     }

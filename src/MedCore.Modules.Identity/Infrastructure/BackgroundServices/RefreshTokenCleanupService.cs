@@ -1,5 +1,3 @@
-using Microsoft.Extensions.Options;
-
 namespace MedCore.Modules.Identity.Infrastructure.BackgroundServices;
 
 using MedCore.Modules.Identity.Configuration;
@@ -7,6 +5,7 @@ using MedCore.Modules.Identity.Domain.Tokens;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 internal sealed class RefreshTokenCleanupService : BackgroundService
 {
@@ -26,6 +25,10 @@ internal sealed class RefreshTokenCleanupService : BackgroundService
     
     protected override async Task ExecuteAsync(CancellationToken ct)
     {
+        _logger.LogInformation(
+            "Refresh token cleanup service started. Interval: every {IntervalInHours} hour(s).",
+            _settings.IntervalInHours);
+        
         while (!ct.IsCancellationRequested)
         {
             await CleanupExpiredTokensAsync(ct);
@@ -41,8 +44,9 @@ internal sealed class RefreshTokenCleanupService : BackgroundService
             var repository = scope.ServiceProvider.GetRequiredService<IRefreshTokenRepository>();
             var deleted = await repository.DeleteExpiredAsync(ct);
             
-            _logger.LogInformation("Expired Refresh tokens cleanup: Deleted {Count} expired " +
-                                   "refresh token(s).", deleted);
+            _logger.LogInformation(
+                "Expired refresh token cleanup complete: {DeletedCount} token(s) deleted.",
+                deleted);
         }
         catch (OperationCanceledException)
         {
