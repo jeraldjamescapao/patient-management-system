@@ -32,11 +32,6 @@ public static class IdentityModuleServiceCollectionExtensions
     {
         var connectionString = configuration.GetConnectionString("PostgreSqlConnection") 
             ?? throw new InvalidOperationException("Database connection string is not configured.");
-
-        services.AddOptions<FrontendSettings>()
-            .BindConfiguration(FrontendSettings.SectionName)
-            .ValidateDataAnnotations()
-            .ValidateOnStart();
         
         services.AddIdentityPersistence(connectionString);
         services.AddIdentityServices(configuration);
