@@ -123,13 +123,12 @@ public static class IdentityModuleServiceCollectionExtensions
         
         var jwtSettings = configuration.GetSection(JwtSettings.SectionName).Get<JwtSettings>()
             ?? throw new InvalidOperationException("JWT settings are not configured.");
-        
-        JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
         services
             .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
+                options.MapInboundClaims = false;
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = true,
