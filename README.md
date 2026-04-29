@@ -1,16 +1,15 @@
 # MedCore
 
-> This README is a work in progress, just like the project itself.
-
-MedCore is a personal backend project built with ASP.NET Core (.NET 10).
-The goal is to design a modular medical management API with clean architecture
-and clear separation of concerns.
+MedCore is a healthcare API for managing patients, doctors, and appointments.
+Built as a portfolio project showcasing .NET 10 modular monolith architecture
+with clean layer separation, JWT authentication, refresh token rotation,
+and structured logging. Built with ASP.NET Core, EF Core, and PostgreSQL.
 
 ## What is built so far
 
 ### Identity Module
 
-- JWT authentication with refresh token rotation
+- JWT authentication with refresh token rotation and theft detection
 - SHA-256 refresh token hashing stored in PostgreSQL
 - HttpOnly cookie-based token delivery
 - Email confirmation flow via MailKit (Ethereal Email for development)
@@ -18,21 +17,32 @@ and clear separation of concerns.
 - Structured logging with Serilog
 - RFC 7807 ProblemDetails error responses
 - Background service for expired token cleanup
+- API versioning (v1)
 - API documentation via Scalar UI at `/scalar/v1`
 
 ## Tech Stack
 
 - ASP.NET Core (.NET 10)
 - PostgreSQL 17 (Docker)
-- Entity Framework Core
+- Entity Framework Core 10
 - ASP.NET Core Identity
 - Serilog
 - MailKit
 
 ## Architecture
 
-Modular monolith with clean layer separation.
-Each module is designed to be extracted into a standalone microservice.
+Modular monolith with clean layer separation: Domain, Application,
+Infrastructure, and Presentation. Module boundaries are designed so
+each module can be extracted into a standalone microservice.
+
+Each module registers its own services, persistence, and controllers.
+The API host only handles startup wiring.
+
+`IIdentityUnitOfWork` is introduced in the Application layer to keep
+`IdentityDbContext` out of `AuthService`. This is intentional — it
+enforces the Dependency Inversion Principle and makes the service
+testable without a real database, even though it is overkill at this
+scale. It signals the module is ready for microservice extraction.
 
 ## Getting Started
 
@@ -47,13 +57,22 @@ Each module is designed to be extracted into a standalone microservice.
 docker-compose up -d
 ```
 
+PostgreSQL will be available at `localhost:5432`.
+
 ### Apply migrations
 
-Run from the `MedCore.Modules.Identity` project directory:
+From the solution root:
 
 ```bash
-dotnet ef database update
+dotnet ef database update --project src/MedCore.Modules.Identity
 ```
+
+### Email (development)
+
+The app uses Ethereal Email for development. No real emails are delivered.
+Credentials in `appsettings.json` are intentional for reviewer convenience.
+To use your own Ethereal account, create a free one at https://ethereal.email
+and override the `Email` section in `appsettings.Development.json`.
 
 ### API docs
 
@@ -61,8 +80,8 @@ Start the app in Development mode and visit: https://localhost:7212/scalar/v1
 
 ## Status
 
-Actively in development. New modules will be added progressively.
+Actively in development. Patients, Doctors, and Appointments modules coming next.
 
 ## Author
 
-Jerald James Capao — [GitHub](https://github.com/your-username)
+Jerald James Capao — [GitHub](https://github.com/jeraldjamescapao)
