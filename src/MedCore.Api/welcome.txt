@@ -1,0 +1,11 @@
++--------------------------------------------------+
+|                                                  |
+|   MedCore API                                    |
+|   by Jerald James Capao                          |
+|                                                  |
+|   Healthcare API for patients, doctors,          |
+|   and appointments.                              |
+|                                                  |
+|   Docs  ->  /scalar/v1                           |
+|                                                  |
++--------------------------------------------------+

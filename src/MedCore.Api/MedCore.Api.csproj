@@ -21,5 +21,11 @@
       <ProjectReference Include="..\MedCore.Infrastructure\MedCore.Infrastructure.csproj" />
       <ProjectReference Include="..\MedCore.Modules.Identity\MedCore.Modules.Identity.csproj" />
     </ItemGroup>
+    
+    <ItemGroup>
+        <Content Include="welcome.txt">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
 
 </Project>

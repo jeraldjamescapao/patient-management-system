@@ -57,7 +57,9 @@ try
     app.UseAuthentication();
     app.UseAuthorization();
 
-    app.MapGet("/", () => "Bonjour! Welcome to MedCore API, by Jerald James Capao. :)");
+    var welcomeText = await File.ReadAllTextAsync("welcome.txt");
+    app.MapGet("/", () => Results.Text(welcomeText));
+    
     app.MapControllers();
     app.MapModuleEndpoints();
 
