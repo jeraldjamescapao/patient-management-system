@@ -5,6 +5,18 @@ Built as a portfolio project showcasing .NET 10 modular monolith architecture
 with clean layer separation, JWT authentication, refresh token rotation,
 and structured logging. Built with ASP.NET Core, EF Core, and PostgreSQL.
 
+## The Story
+
+I built MedCore to demonstrate how a production-ready backend is structured,
+not just that it works, but that it is built to last. The domain is healthcare:
+patients, doctors, and appointments. Simple enough to stay focused, complex
+enough to justify real architectural decisions. Every choice in this project,
+from `IIdentityUnitOfWork` enforcing the Dependency Inversion Principle to
+module boundaries designed for microservice extraction, reflects how I think
+about software: with the next developer, the next requirement, and the next
+scale in mind. MedCore is where I close the gap between knowing a pattern and
+knowing when and why to use it.
+
 ## What is built so far
 
 ### Identity Module
@@ -20,6 +32,11 @@ and structured logging. Built with ASP.NET Core, EF Core, and PostgreSQL.
 - API versioning (v1)
 - API documentation via Scalar UI at `/scalar/v1`
 
+### Tests
+
+- Unit tests for `AuthService` (Register and Login flows)
+- xUnit, NSubstitute, FluentAssertions
+
 ## Tech Stack
 
 - ASP.NET Core (.NET 10)
@@ -28,6 +45,17 @@ and structured logging. Built with ASP.NET Core, EF Core, and PostgreSQL.
 - ASP.NET Core Identity
 - Serilog
 - MailKit
+  docs: update README with story section and acknowledge tooling
+  Context
+- readme had no context on the intent or thinking behind MedCore
+- tooling used during development was not disclosed
+
+Changes
+- add The Story section above What is built so far
+- add Claude acknowledgment under Author
+
+Technical Notes
+- no code changes
 
 ## Architecture
 
@@ -39,7 +67,7 @@ Each module registers its own services, persistence, and controllers.
 The API host only handles startup wiring.
 
 `IIdentityUnitOfWork` is introduced in the Application layer to keep
-`IdentityDbContext` out of `AuthService`. This is intentional — it
+`IdentityDbContext` out of `AuthService`. This is intentional. It
 enforces the Dependency Inversion Principle and makes the service
 testable without a real database, even though it is overkill at this
 scale. It signals the module is ready for microservice extraction.
@@ -64,7 +92,15 @@ PostgreSQL will be available at `localhost:5432`.
 From the solution root:
 
 ```bash
-dotnet ef database update --project src/MedCore.Modules.Identity
+dotnet ef database update --project src/MedCore.Modules.Identity/MedCore.Modules.Identity.csproj
+```
+
+### Run the tests
+
+From the solution root:
+
+```bash
+dotnet test
 ```
 
 ### Email (development)
@@ -80,8 +116,12 @@ Start the app in Development mode and visit: https://localhost:7212/scalar/v1
 
 ## Status
 
-Actively in development. Patients, Doctors, and Appointments modules coming next.
+Actively in development. Identity module is complete with unit tests in place.
+Patients, Doctors, and Appointments modules coming next.
 
 ## Author
 
 Jerald James Capao — [GitHub](https://github.com/jeraldjamescapao)
+
+Used Claude by Anthropic throughout development. Every architectural decision,
+tradeoff, and design choice was made by me.
