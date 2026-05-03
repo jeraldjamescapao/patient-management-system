@@ -11,13 +11,6 @@ internal sealed class RefreshTokenRepository : IRefreshTokenRepository
     {
         _context = context;
     }
-    
-    public async Task<IReadOnlyList<RefreshToken>> GetFamilyAsync(Guid familyId, CancellationToken ct = default)
-    {
-        return await _context.RefreshTokens
-            .Where(t => t.FamilyId == familyId)
-            .ToListAsync(ct);
-    }
 
     public async Task<RefreshToken?> GetByTokenAsync(string token, CancellationToken ct = default)
     {
