@@ -37,7 +37,7 @@ knowing when and why to use it.
 - Unit tests for `AuthService` covering all 7 flows
 - `RegisterTests` — email conflict, user creation failure, role assignment failure, email delivery failure, success
 - `LoginTests` — user not found, account deactivated, email not confirmed, invalid password, success
-- `RefreshTests` — empty token, token not found, revoked without replacement, reuse detected (full family revocation), user not found, success
+- `RefreshTests` — empty token, token not found, revoked without replacement, expired token, reuse detected (full family revocation), user not found, success
 - `LogoutTests` — empty token, token not found or inactive, valid token revoked
 - `LogoutAllTests` — all sessions revoked for user
 - `ConfirmEmailTests` — user not found, already confirmed, invalid token, success
