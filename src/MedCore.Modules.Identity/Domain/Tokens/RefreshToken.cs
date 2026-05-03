@@ -57,6 +57,9 @@ public sealed class RefreshToken
     
     public void MarkReplacedBy(Guid newTokenId)
     {
+        if (newTokenId == Guid.Empty)
+            throw new ArgumentException("New token ID cannot be empty.");
+        
         ReplacedByTokenId = newTokenId;
     }
 }

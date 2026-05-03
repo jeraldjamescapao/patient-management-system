@@ -54,7 +54,7 @@ internal sealed class RefreshTokenCleanupService : BackgroundService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Expired Refresh tokens cleanup failed.");
+            _logger.LogError(ex, "Expired refresh token cleanup failed.");
         }
     }
 }

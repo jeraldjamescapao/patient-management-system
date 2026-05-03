@@ -51,8 +51,8 @@ try
     }
 
     app.UseHttpsRedirection();
-    app.UseMiddleware<ExceptionHandlingMiddleware>();
     app.UseSerilogRequestLogging();
+    app.UseMiddleware<ExceptionHandlingMiddleware>();
     
     app.UseAuthentication();
     app.UseAuthorization();
