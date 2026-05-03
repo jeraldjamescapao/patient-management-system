@@ -110,6 +110,13 @@ and override the `Email` section in `appsettings.Development.json`.
 
 Start the app in Development mode and visit: https://localhost:7212/scalar/v1
 
+### Structured logs (Seq)
+
+Seq runs as a Docker service alongside PostgreSQL. Once the containers are up,
+visit http://localhost:5341 to browse and query structured logs in real time.
+
+Logs are also written to rolling daily JSON files under `logs/` in the project root.
+
 ### Try the API with MedCore.http
 
 The repo includes `src/MedCore.Api/MedCore.http` with all auth endpoints
