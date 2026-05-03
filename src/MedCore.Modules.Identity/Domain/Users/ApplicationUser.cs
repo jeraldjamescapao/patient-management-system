@@ -73,13 +73,22 @@ public sealed class ApplicationUser : IdentityUser<Guid>, IAuditableEntity
     
     public void UpdateName(string firstName, string lastName, string modifiedBy)
     {
-        FirstName = firstName;
-        LastName = lastName;
+        if (string.IsNullOrWhiteSpace(firstName))
+            throw new ArgumentException("FirstName is required.");
+        if (string.IsNullOrWhiteSpace(lastName))
+            throw new ArgumentException("LastName is required.");
+        
+        FirstName = firstName.Trim();
+        LastName = lastName.Trim();
         ModifiedAtUtc = DateTimeOffset.UtcNow;
         ModifiedBy = modifiedBy;
     }
+    
     public void UpdateBirthDate(DateOnly birthDate, string modifiedBy)
     {
+        if (birthDate > DateOnly.FromDateTime(DateTime.UtcNow))
+            throw new ArgumentException("BirthDate cannot be in the future.");
+        
         BirthDate = birthDate;
         ModifiedAtUtc = DateTimeOffset.UtcNow;   
         ModifiedBy = modifiedBy;
