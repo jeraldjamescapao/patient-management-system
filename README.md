@@ -34,7 +34,14 @@ knowing when and why to use it.
 
 ### Tests
 
-- Unit tests for `AuthService` (Register and Login flows)
+- Unit tests for `AuthService` covering all 7 flows
+- `RegisterAsync` — email conflict, user creation failure, role assignment failure, email delivery failure, success
+- `LoginAsync` — user not found, account deactivated, email not confirmed, invalid password, success
+- `RefreshAsync` — empty token, token not found, revoked without replacement, reuse detected (full family revocation), success
+- `LogoutAsync` — empty token, token not found or inactive, valid token revoked
+- `LogoutAllAsync` — all sessions revoked for user
+- `ConfirmEmailAsync` — user not found, already confirmed, invalid token, success
+- `ResendConfirmationEmailAsync` — user not found (silent), already confirmed (silent), email delivery failure, success
 - xUnit, NSubstitute, FluentAssertions
 
 ## Tech Stack

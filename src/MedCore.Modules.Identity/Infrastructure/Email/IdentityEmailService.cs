@@ -35,16 +35,16 @@ internal sealed class IdentityEmailService : IIdentityEmailService
         var message = new EmailMessage(
             To: user.Email!,
             Subject: "Confirm your email address",
-            HtmlBody: BuildHtmlBody(user.FirstName, confirmationLink),
-            PlainTextBody: BuildPlainTextBody(user.FirstName, confirmationLink));
+            HtmlBody: BuildHtmlBody(user.FullName, confirmationLink),
+            PlainTextBody: BuildPlainTextBody(user.FullName, confirmationLink));
 
         await _emailService.SendAsync(message, ct);
     }
 
-    private string BuildHtmlBody(string firstName, string confirmationLink)
+    private string BuildHtmlBody(string fullName, string confirmationLink)
     {
         return $"""
-                <p>Hi {firstName},</p>
+                <p>Hi {fullName},</p>
                 <p>Thanks for registering. Please confirm your email address by clicking the link below.</p>
                 <p><a href="{confirmationLink}">Confirm Email Address</a></p>
                 <p>This link expires in {_identityTokenSettings.EmailConfirmationExpirationInHours} hours.</p>
@@ -52,10 +52,10 @@ internal sealed class IdentityEmailService : IIdentityEmailService
                 """;
     }
 
-    private string BuildPlainTextBody(string firstName, string confirmationLink)
+    private string BuildPlainTextBody(string fullName, string confirmationLink)
     {
         return $"""
-                Hi {firstName},
+                Hi {fullName},
 
                 Thanks for registering. Please confirm your email address by visiting the link below.
 

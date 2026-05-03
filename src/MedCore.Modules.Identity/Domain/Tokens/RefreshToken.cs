@@ -44,7 +44,7 @@ public sealed class RefreshToken
         if (string.IsNullOrEmpty(token))
             throw new ArgumentException("Token cannot be null or empty.");
         if (expiresAtUtc <= DateTimeOffset.UtcNow)
-            throw new ArgumentException("ExpiresAtUtc must be in the future!");
+            throw new ArgumentException("ExpiresAtUtc must be in the future.");
         
         return new RefreshToken(userId, familyId, token, expiresAtUtc);
     }

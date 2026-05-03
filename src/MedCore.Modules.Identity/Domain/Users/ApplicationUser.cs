@@ -55,7 +55,6 @@ public sealed class ApplicationUser : IdentityUser<Guid>, IAuditableEntity
         DateOnly birthDate,
         string createdBy)
     {
-        // The guards are here to ensure validity!
         if (string.IsNullOrWhiteSpace(email))
             throw new ArgumentException("Email is required.");
         if (string.IsNullOrWhiteSpace(firstName))
@@ -100,7 +99,7 @@ public sealed class ApplicationUser : IdentityUser<Guid>, IAuditableEntity
     
     public void Activate(string modifiedBy)
     {
-        if(IsActive) return;
+        if (IsActive) return;
         
         IsActive = true;
         ModifiedAtUtc = DateTimeOffset.UtcNow; 
