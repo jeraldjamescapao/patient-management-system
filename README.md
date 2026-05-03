@@ -52,17 +52,6 @@ knowing when and why to use it.
 - ASP.NET Core Identity
 - Serilog
 - MailKit
-  docs: update README with story section and acknowledge tooling
-  Context
-- readme had no context on the intent or thinking behind MedCore
-- tooling used during development was not disclosed
-
-Changes
-- add The Story section above What is built so far
-- add Claude acknowledgment under Author
-
-Technical Notes
-- no code changes
 
 ## Architecture
 
@@ -130,5 +119,7 @@ Patients, Doctors, and Appointments modules coming next.
 
 Jerald James Capao — [GitHub](https://github.com/jeraldjamescapao)
 
-Used Claude by Anthropic throughout development. Every architectural decision,
-tradeoff, and design choice was made by me.
+Used Claude by Anthropic throughout development.
+
+Every architectural decision,
+tradeoff, and design choice was made by yours truly.
