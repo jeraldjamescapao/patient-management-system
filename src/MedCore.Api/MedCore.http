@@ -1,6 +1,108 @@
 @MedCore_HostAddress = https://localhost:7212
+@ContentType = application/json
 
-GET {{MedCore_HostAddress}}/
-Accept: text
+# Copy an access token from a login or register response and paste it here.
+@AccessToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1OTczNzQ4OS05N2M2LTRhZWYtYWQzYi02ZDZlOGY5NDg5ODYiLCJlbWFpbCI6ImRheXRvbjQzQGV0aGVyZWFsLmVtYWlsIiwianRpIjoiNDQ2Mzc3YzEtMjYzZi00OTcwLWJmYTctYjEzZTgwMWFhMTg5IiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiUGF0aWVudCIsImV4cCI6MTc3NzgzOTczMCwiaXNzIjoiTWVkQ29yZSIsImF1ZCI6Ik1lZENvcmUifQ.hgIGHfwA7M4aAg0GjAJcaxffI2F3J3TALqVDAACV7rM
 
 ###
+
+# ─────────────────────────────────────────
+# Welcome to MedCore!
+# ─────────────────────────────────────────
+
+GET {{MedCore_HostAddress}}/
+Accept: text/plain
+
+###
+
+# ─────────────────────────────────────────
+# Auth — Register
+# Creates a new Patient account and sends a confirmation email.
+# Returns: 201 with access token + sets HttpOnly refresh token cookie.
+# ─────────────────────────────────────────
+
+POST {{MedCore_HostAddress}}/api/v1/auth/register
+Content-Type: {{ContentType}}
+
+{
+  "firstName": "Jerald James Capao",
+  "lastName": "Test",
+  "email": "dayton43@ethereal.email",
+  "password": "ThePasswordOfAllSeasons1!",
+  "birthDate": "1988-06-27"
+}
+
+###
+
+# ─────────────────────────────────────────
+# Auth — Login
+# Returns: 200 with access token + sets HttpOnly refresh token cookie.
+# ─────────────────────────────────────────
+
+POST {{MedCore_HostAddress}}/api/v1/auth/login
+Content-Type: {{ContentType}}
+
+{
+  "email": "dayton43@ethereal.email",
+  "password": "ThePasswordOfAllSeasons1!"
+}
+
+###
+
+# ─────────────────────────────────────────
+# Auth — Refresh
+# Uses the HttpOnly refresh token cookie automatically (browser/IDE handles it).
+# Returns: 200 with a new access token + rotates the refresh token cookie.
+# ─────────────────────────────────────────
+
+POST {{MedCore_HostAddress}}/api/v1/auth/refresh
+
+###
+
+# ─────────────────────────────────────────
+# Auth — Logout
+# Revokes the current refresh token. Cookie is cleared.
+# Returns: 204 No Content.
+# ─────────────────────────────────────────
+
+POST {{MedCore_HostAddress}}/api/v1/auth/logout
+
+###
+
+# ─────────────────────────────────────────
+# Auth — Logout All
+# Revokes all active sessions for the authenticated user.
+# Requires: Bearer token in Authorization header.
+# Returns: 204 No Content.
+# ─────────────────────────────────────────
+
+POST {{MedCore_HostAddress}}/api/v1/auth/logout-all
+Authorization: Bearer {{AccessToken}}
+
+###
+
+# ─────────────────────────────────────────
+# Auth — Confirm Email
+# Paste the userId and token from the confirmation email link here.
+# Returns: 200 on success.
+# ─────────────────────────────────────────
+
+GET {{MedCore_HostAddress}}/api/v1/auth/confirm-email?userId=00000000-0000-000000000000&token=PASTE_TOKEN_HERE
+
+###
+
+# ─────────────────────────────────────────
+# Auth — Resend Confirmation Email
+# Silently succeeds even if the email is unknown or already confirmed (anti-enumeration).
+# Returns: 200.
+# ─────────────────────────────────────────
+
+POST {{MedCore_HostAddress}}/api/v1/auth/resend-confirmation-email
+Content-Type: {{ContentType}}
+
+{
+  "email": "dayton43@ethereal.email"
+}
+
+###
+

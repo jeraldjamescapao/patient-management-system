@@ -110,6 +110,18 @@ and override the `Email` section in `appsettings.Development.json`.
 
 Start the app in Development mode and visit: https://localhost:7212/scalar/v1
 
+### Try the API with MedCore.http
+
+The repo includes `src/MedCore.Api/MedCore.http` with all auth endpoints
+pre-configured and ready to run. It works in:
+
+- **JetBrains Rider** — built-in HTTP client, no setup needed
+- **Visual Studio** — built-in HTTP client, no setup needed
+- **VS Code** — install the [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client) extension by Huachao Mao
+
+Open the file, set `@AccessToken` to a token from a login response, and run
+any request directly from your editor.
+
 ## Status
 
 Actively in development. Identity module is complete with unit tests in place.
