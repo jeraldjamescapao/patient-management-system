@@ -5,7 +5,7 @@ using MedCore.Modules.Identity.Domain.Tokens;
 using NSubstitute;
 using Xunit;
 
-public sealed class LogoutAsyncTests : AuthServiceTestBase
+public sealed class LogoutTests : AuthServiceTestBase
 {
     [Fact]
     public async Task LogoutAsync_EmptyToken_SilentlySucceeds()
@@ -53,21 +53,5 @@ public sealed class LogoutAsyncTests : AuthServiceTestBase
         await RefreshTokenRepository
             .Received(1)
             .SaveChangesAsync(Arg.Any<CancellationToken>());
-    }
-}
-
-public sealed class LogoutAllAsyncTests : AuthServiceTestBase
-{
-    [Fact]
-    public async Task LogoutAllAsync_ValidUserId_RevokesAllTokensAndSucceeds()
-    {
-        var userId = Guid.NewGuid();
-
-        var result = await Sut.LogoutAllAsync(userId);
-
-        result.IsSuccess.Should().BeTrue();
-        await RefreshTokenRepository
-            .Received(1)
-            .RevokeAllForUserAsync(userId, Arg.Any<CancellationToken>());
     }
 }

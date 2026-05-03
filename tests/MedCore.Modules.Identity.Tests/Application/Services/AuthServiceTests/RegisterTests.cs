@@ -9,7 +9,7 @@ using MedCore.Modules.Identity.Application.Contracts.Authentication;
 using MedCore.Modules.Identity.Domain.Users;
 using Xunit;
 
-public sealed class RegisterAsyncTests : AuthServiceTestBase
+public sealed class RegisterTests : AuthServiceTestBase
 {
     private static readonly RegisterRequest ValidRequest = new(
         FirstName: "Jerald James Capao",

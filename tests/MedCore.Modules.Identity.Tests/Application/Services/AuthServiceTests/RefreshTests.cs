@@ -7,7 +7,7 @@ using MedCore.Modules.Identity.Domain.Users;
 using NSubstitute;
 using Xunit;
 
-public sealed class RefreshAsyncTests : AuthServiceTestBase
+public sealed class RefreshTests : AuthServiceTestBase
 {
     private static RefreshToken CreateActiveToken(Guid? userId = null) =>
         RefreshToken.Create(

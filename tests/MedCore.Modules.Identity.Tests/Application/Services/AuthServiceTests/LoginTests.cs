@@ -7,7 +7,7 @@ using MedCore.Modules.Identity.Application.Contracts.Authentication;
 using MedCore.Modules.Identity.Domain.Users;
 using Xunit;
 
-public sealed class LoginAsyncTests : AuthServiceTestBase
+public sealed class LoginTests : AuthServiceTestBase
 {
     private static readonly LoginRequest ValidRequest = new(
         Email:    "jjcapaotest@softwareengineers.ch",
