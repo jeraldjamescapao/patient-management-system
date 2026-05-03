@@ -20,10 +20,7 @@ public sealed class ApplicationUser : IdentityUser<Guid>, IAuditableEntity
     public string FullName => $"{FirstName} {LastName}";
     public string FullNameInverted => $"{LastName}, {FirstName}";
     
-    public string FullNameWithInitials =>
-        !string.IsNullOrEmpty(FirstName)
-            ? $"{FirstName[..1]}. {LastName}"
-            : LastName;
+    public string FullNameWithInitials => $"{FirstName[..1]}. {LastName}";
 
     private ApplicationUser() { }
 
@@ -62,7 +59,7 @@ public sealed class ApplicationUser : IdentityUser<Guid>, IAuditableEntity
         if (string.IsNullOrWhiteSpace(lastName))
             throw new ArgumentException("LastName is required.");
         if (birthDate > DateOnly.FromDateTime(DateTime.UtcNow))
-            throw new ArgumentException("BirthDate cannot be in the future!");
+            throw new ArgumentException("BirthDate cannot be in the future.");
         if (string.IsNullOrWhiteSpace(createdBy))
             throw new ArgumentException("CreatedBy is required.");
         

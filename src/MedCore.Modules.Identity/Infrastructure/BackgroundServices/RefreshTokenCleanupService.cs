@@ -26,7 +26,8 @@ internal sealed class RefreshTokenCleanupService : BackgroundService
     protected override async Task ExecuteAsync(CancellationToken ct)
     {
         _logger.LogInformation(
-            "Refresh token cleanup service started. Interval: every {IntervalInHours} hour(s).",
+            "Refresh token cleanup service started. " +
+            "First run is immediate. Interval: every {IntervalInHours} hour(s).",
             _settings.IntervalInHours);
         
         while (!ct.IsCancellationRequested)
@@ -45,8 +46,10 @@ internal sealed class RefreshTokenCleanupService : BackgroundService
             var deleted = await repository.DeleteExpiredAsync(ct);
             
             _logger.LogInformation(
-                "Expired refresh token cleanup complete: {DeletedCount} token(s) deleted.",
-                deleted);
+                "Expired refresh token cleanup complete: {DeletedCount} token(s) deleted. " +
+                "Next run at {NextRunAtUtc:u}.",
+                deleted,
+                DateTimeOffset.UtcNow.AddHours(_settings.IntervalInHours));
         }
         catch (OperationCanceledException)
         {
