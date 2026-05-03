@@ -27,6 +27,23 @@ public sealed class RefreshTests : AuthServiceTestBase
         token.Revoke(); // IsActive = false, ReplacedByTokenId = null → TokenExpiredOrRevoked path
         return token;
     }
+    
+    private static RefreshToken CreateExpiredToken(Guid? userId = null)
+    {
+        var token = RefreshToken.Create(
+            userId ?? Guid.NewGuid(),
+            Guid.NewGuid(),
+            "hashed-expired-token",
+            DateTimeOffset.UtcNow.AddSeconds(5)); // valid just long enough to pass the guard
+
+        // Force ExpiresAtUtc into the past — IsExpired becomes true, IsActive becomes false.
+        // IsRevoked remains false, so this is the pure expiry path (not the revoked path).
+        typeof(RefreshToken)
+            .GetProperty(nameof(RefreshToken.ExpiresAtUtc))!
+            .SetValue(token, DateTimeOffset.UtcNow.AddDays(-1));
+
+        return token;
+    }
 
     [Fact]
     public async Task RefreshAsync_EmptyToken_ReturnsUnauthorized()
@@ -55,13 +72,31 @@ public sealed class RefreshTests : AuthServiceTestBase
     [Fact]
     public async Task RefreshAsync_TokenRevokedWithoutReplacement_ReturnsUnauthorized()
     {
-        // An expired token with no ReplacedByTokenId — not a reuse signal, just expired.
-        var expired = CreateRevokedToken();
+        var token = CreateRevokedToken();
         
         RefreshTokenRepository
             .GetByTokenAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
-            .Returns(expired);
+            .Returns(token);
         
+        var result = await Sut.RefreshAsync("some-raw-token");
+
+        result.IsFailure.Should().BeTrue();
+        result.ErrorType.Should().Be(ResultErrorType.Unauthorized);
+        result.Error!.Code.Should().Be("IDENTITY_AUTH_TOKEN_EXPIRED_OR_REVOKED");
+        await RefreshTokenRepository
+            .DidNotReceive()
+            .RevokeAllForUserAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>());
+    }
+    
+    [Fact]
+    public async Task RefreshAsync_ExpiredToken_ReturnsUnauthorized()
+    {
+        var token = CreateExpiredToken();
+
+        RefreshTokenRepository
+            .GetByTokenAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
+            .Returns(token);
+
         var result = await Sut.RefreshAsync("some-raw-token");
 
         result.IsFailure.Should().BeTrue();
