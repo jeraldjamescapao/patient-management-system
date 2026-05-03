@@ -115,11 +115,11 @@ Start the app in Development mode and visit: https://localhost:7212/scalar/v1
 Actively in development. Identity module is complete with unit tests in place.
 Patients, Doctors, and Appointments modules coming next.
 
-## Author
+## About the Author
 
-Jerald James Capao — [GitHub](https://github.com/jeraldjamescapao)
+Jerald James Capao — Software Engineer
 
-Used Claude by Anthropic throughout development.
+GitHub: https://github.com/jeraldjamescapao
 
-Every architectural decision,
-tradeoff, and design choice was made by yours truly.
+This project is designed and implemented end-to-end, including architecture, domain modeling, and technical decisions.
+AI tools such as Anthropic Claude are used as support during development.
