@@ -34,11 +34,11 @@ public sealed class ExceptionHandlingMiddleware
                 httpContext.Request.Path.Value ?? string.Empty,
                 exception);
 
-            await WriteProblemsDetailsAsync(httpContext, exception);
+            await WriteProblemDetailsAsync(httpContext, exception);
         }
     }
 
-    private static async Task WriteProblemsDetailsAsync(HttpContext httpContext, Exception exception)
+    private static async Task WriteProblemDetailsAsync(HttpContext httpContext, Exception exception)
     {
         if (httpContext.Response.HasStarted)
         {

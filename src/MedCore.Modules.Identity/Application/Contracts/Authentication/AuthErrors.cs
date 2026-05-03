@@ -36,9 +36,6 @@ public static class AuthErrors
 
     public static readonly ResultError TokenExpiredOrRevoked =
         new("IDENTITY_AUTH_TOKEN_EXPIRED_OR_REVOKED", "Refresh token is expired or revoked.");
-
-    public static readonly ResultError TokenAlreadyRevoked =
-        new("IDENTITY_AUTH_TOKEN_ALREADY_REVOKED", "Token is already revoked or expired.");
     
     public static readonly ResultError EmailDeliveryFailed =
         new("IDENTITY_AUTH_EMAIL_DELIVERY_FAILED", "Failed to send confirmation email. Please try again later.");
