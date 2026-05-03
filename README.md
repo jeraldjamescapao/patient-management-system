@@ -35,13 +35,13 @@ knowing when and why to use it.
 ### Tests
 
 - Unit tests for `AuthService` covering all 7 flows
-- `RegisterAsync` — email conflict, user creation failure, role assignment failure, email delivery failure, success
-- `LoginAsync` — user not found, account deactivated, email not confirmed, invalid password, success
-- `RefreshAsync` — empty token, token not found, revoked without replacement, reuse detected (full family revocation), success
-- `LogoutAsync` — empty token, token not found or inactive, valid token revoked
-- `LogoutAllAsync` — all sessions revoked for user
-- `ConfirmEmailAsync` — user not found, already confirmed, invalid token, success
-- `ResendConfirmationEmailAsync` — user not found (silent), already confirmed (silent), email delivery failure, success
+- `RegisterTests` — email conflict, user creation failure, role assignment failure, email delivery failure, success
+- `LoginTests` — user not found, account deactivated, email not confirmed, invalid password, success
+- `RefreshTests` — empty token, token not found, revoked without replacement, reuse detected (full family revocation), user not found, success
+- `LogoutTests` — empty token, token not found or inactive, valid token revoked
+- `LogoutAllTests` — all sessions revoked for user
+- `ConfirmEmailTests` — user not found, already confirmed, invalid token, success
+- `ResendConfirmationEmailTests` — user not found (silent), already confirmed (silent), email delivery failure, success
 - xUnit, NSubstitute, FluentAssertions
 
 ## Tech Stack
