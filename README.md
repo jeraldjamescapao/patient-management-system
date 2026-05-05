@@ -109,10 +109,12 @@ Seq will be available at `http://localhost:5341`.
 
 ### Apply migrations
 
-From the solution root, apply Identity migrations:
+From the solution root:
+
+Apply Identity migrations:
 
 ```bash
-dotnet ef database update --project src/MedCore.Modules.Identity/MedCore.Modules.Identity.csproj --startup-project src/MedCore.Api/MedCore.Api.csproj
+dotnet ef database update --project src/MedCore.Modules.Identity/MedCore.Modules.Identity.csproj --startup-project src/MedCore.Api/MedCore.Api.csproj --context IdentityDbContext
 ```
 
 Apply Localization migrations:
