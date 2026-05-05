@@ -88,7 +88,7 @@ Authorization: Bearer {{AccessToken}}
 # Returns: 200 on success.
 # ─────────────────────────────────────────
 
-GET {{MedCore_HostAddress}}/api/v1/auth/confirm-email?userId=00000000-0000-000000000000&token=PASTE_TOKEN_HERE
+GET {{MedCore_HostAddress}}/api/v1/auth/confirm-email?userId=00000000-0000-0000-0000-000000000000&token=PASTE_TOKEN_HERE
 
 ###
 

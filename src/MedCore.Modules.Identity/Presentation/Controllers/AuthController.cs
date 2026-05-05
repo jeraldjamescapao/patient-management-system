@@ -98,7 +98,9 @@ public sealed class AuthController : BaseApiController
     public async Task<IActionResult> UpdatePreferredCultureAsync(
         [FromBody] UpdateCultureRequest request, CancellationToken ct)
     {
-        var userId = Guid.Parse(_currentUserService.UserId);
+        if (!Guid.TryParse(_currentUserService.UserId, out var userId))
+            return ToActionResult(Result<bool>.Unauthorized(AuthErrors.InvalidCredentials));
+        
         var result = await _authService.UpdatePreferredCultureAsync(userId, request.Culture, ct);
         if (result.IsFailure) return ToActionResult(result);
 
