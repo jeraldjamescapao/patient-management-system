@@ -38,6 +38,10 @@ internal sealed class IdentityDbContext
             entity.Property(x => x.BirthDate)
                 .HasColumnType("date")
                 .IsRequired();
+            
+            entity.Property(x => x.PreferredCulture)
+                .HasMaxLength(10)
+                .IsRequired(false);
 
             entity.Property(x => x.IsActive)
                 .IsRequired()

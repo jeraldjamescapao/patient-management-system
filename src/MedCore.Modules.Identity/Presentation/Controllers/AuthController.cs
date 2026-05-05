@@ -4,6 +4,7 @@ using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 using MedCore.Common.Controllers;
 using MedCore.Common.Http;
@@ -19,14 +20,17 @@ public sealed class AuthController : BaseApiController
 {
     private readonly IAuthService _authService;
     private readonly ICurrentUserService _currentUserService;
+    private readonly IMemoryCache _cache;
     private readonly JwtSettings _jwtSettings;
 
     public AuthController(
         IAuthService authService, 
+        IMemoryCache cache,
         ICurrentUserService currentUserService,
         IOptions<JwtSettings> jwtSettings)
     {
         _authService = authService;
+        _cache = cache;
         _currentUserService = currentUserService;
         _jwtSettings = jwtSettings.Value;
     }
@@ -86,6 +90,20 @@ public sealed class AuthController : BaseApiController
         if (result.IsFailure) return ToActionResult(result);
         
         DeleteRefreshTokenCookie();
+        return NoContent();
+    }
+    
+    [Authorize]
+    [HttpPut("culture")]
+    public async Task<IActionResult> UpdatePreferredCultureAsync(
+        [FromBody] UpdateCultureRequest request, CancellationToken ct)
+    {
+        var userId = Guid.Parse(_currentUserService.UserId);
+        var result = await _authService.UpdatePreferredCultureAsync(userId, request.Culture, ct);
+        if (result.IsFailure) return ToActionResult(result);
+
+        _cache.Remove(CacheKeys.UserCulture(userId));
+
         return NoContent();
     }
     

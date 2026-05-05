@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using NSubstitute;
+using MedCore.Common.Localization;
+using MedCore.Common.Services;
 using MedCore.Modules.Identity.Application.Abstractions.Authentication;
 using MedCore.Modules.Identity.Application.Abstractions.Email;
 using MedCore.Modules.Identity.Application.Abstractions.Persistence;
@@ -23,6 +25,7 @@ public abstract class AuthServiceTestBase
     protected readonly IIdentityUnitOfWork UnitOfWork;
     protected readonly IDbContextTransaction Transaction;
     protected readonly IAuthService Sut;
+    protected readonly ICurrentCultureService CurrentCultureService;
     
     protected static readonly JwtSettings DefaultJwtSettings = new()
     {
@@ -42,6 +45,9 @@ public abstract class AuthServiceTestBase
         UnitOfWork             = Substitute.For<IIdentityUnitOfWork>();
         Transaction            = Substitute.For<IDbContextTransaction>();
         
+        CurrentCultureService = Substitute.For<ICurrentCultureService>();
+        CurrentCultureService.Culture.Returns(SupportedCultures.Default);
+        
         UnitOfWork
             .BeginTransactionAsync(Arg.Any<CancellationToken>())
             .Returns(Transaction);
@@ -59,6 +65,7 @@ public abstract class AuthServiceTestBase
             IdentityEmailService,
             UnitOfWork,
             Options.Create(DefaultJwtSettings),
+            CurrentCultureService,
             NullLogger<AuthService>.Instance);
     }
     

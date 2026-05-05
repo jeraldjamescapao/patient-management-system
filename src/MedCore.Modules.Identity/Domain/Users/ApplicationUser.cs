@@ -81,6 +81,8 @@ public sealed class ApplicationUser : IdentityUser<Guid>, IAuditableEntity
         if (string.IsNullOrWhiteSpace(modifiedBy))
             throw new ArgumentException("ModifiedBy is required.");       
         
+        if (firstName == FirstName && lastName == LastName) return;
+        
         FirstName = firstName.Trim();
         LastName = lastName.Trim();
         ModifiedAtUtc = DateTimeOffset.UtcNow;
@@ -94,8 +96,24 @@ public sealed class ApplicationUser : IdentityUser<Guid>, IAuditableEntity
         if (string.IsNullOrWhiteSpace(modifiedBy))
             throw new ArgumentException("ModifiedBy is required."); 
         
+        if (birthDate == BirthDate) return;
+        
         BirthDate = birthDate;
         ModifiedAtUtc = DateTimeOffset.UtcNow;   
+        ModifiedBy = modifiedBy;
+    }
+    
+    public void UpdatePreferredCulture(string culture, string modifiedBy)
+    {
+        if (string.IsNullOrWhiteSpace(culture))
+            throw new ArgumentException("Culture is required.");
+        if (string.IsNullOrWhiteSpace(modifiedBy))
+            throw new ArgumentException("ModifiedBy is required."); 
+        
+        if (culture == PreferredCulture) return;
+
+        PreferredCulture = culture;
+        ModifiedAtUtc = DateTimeOffset.UtcNow;
         ModifiedBy = modifiedBy;
     }
     

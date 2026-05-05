@@ -5,7 +5,9 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MedCore.Common.Exceptions;
+using MedCore.Common.Localization;
 using MedCore.Common.Results;
+using MedCore.Common.Services;
 using MedCore.Modules.Identity.Application.Abstractions.Authentication;
 using MedCore.Modules.Identity.Application.Abstractions.Email;
 using MedCore.Modules.Identity.Application.Abstractions.Persistence;
@@ -21,6 +23,7 @@ using System.Text;
 internal sealed class AuthService : IAuthService
 {
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly ICurrentCultureService _currentCultureService;
     private readonly IJwtTokenService _jwtTokenService;
     private readonly IRefreshTokenRepository _refreshTokenRepository;
     private readonly IIdentityEmailService _identityEmailService;
@@ -35,6 +38,7 @@ internal sealed class AuthService : IAuthService
         IIdentityEmailService identityEmailService,
         IIdentityUnitOfWork unitOfWork,
         IOptions<JwtSettings> jwtSettings,
+        ICurrentCultureService currentCultureService,
         ILogger<AuthService> logger)
     {
         _userManager = userManager;
@@ -43,6 +47,7 @@ internal sealed class AuthService : IAuthService
         _identityEmailService = identityEmailService;
         _unitOfWork = unitOfWork;
         _jwtSettings = jwtSettings.Value;
+        _currentCultureService = currentCultureService;
         _logger = logger;
     }
     
@@ -88,7 +93,8 @@ internal sealed class AuthService : IAuthService
             var (accessToken, rawRefreshToken) = await IssueTokenPairAsync(user, roles, ct);
             
             var encodedToken = await GenerateEncodedConfirmationTokenAsync(user);
-            await _identityEmailService.SendConfirmationEmailAsync(user, encodedToken, ct);
+            var culture = _currentCultureService.Culture;
+            await _identityEmailService.SendConfirmationEmailAsync(user, encodedToken, culture, ct);
             
             await transaction.CommitAsync(ct);
             
@@ -302,7 +308,8 @@ internal sealed class AuthService : IAuthService
         try
         {
             var encodedToken = await GenerateEncodedConfirmationTokenAsync(user);
-            await _identityEmailService.SendConfirmationEmailAsync(user, encodedToken, ct);
+            var culture = _currentCultureService.Culture;
+            await _identityEmailService.SendConfirmationEmailAsync(user, encodedToken, culture, ct);
         }
         catch (EmailDeliveryException ex)
         {
@@ -311,6 +318,30 @@ internal sealed class AuthService : IAuthService
         }
         
         AuthLogMessages.ResendConfirmationSucceeded(_logger, user.Id, null);
+
+        return Result<bool>.Success(true);
+    }
+    
+    public async Task<Result<bool>> UpdatePreferredCultureAsync(
+        Guid userId, string culture, CancellationToken ct = default)
+    {
+        if (!SupportedCultures.All.Contains(culture))
+        {
+            AuthLogMessages.CultureUpdateUnsupported(_logger, userId, culture, null);
+            return Result<bool>.Validation(AuthErrors.UnsupportedCulture);
+        }
+
+        var user = await _userManager.FindByIdAsync(userId.ToString());
+        if (user is null)
+        {
+            AuthLogMessages.CultureUpdateUserNotFound(_logger, userId, null);
+            return Result<bool>.NotFound(AuthErrors.UserNotFound);
+        }
+
+        user.UpdatePreferredCulture(culture, user.Id.ToString());
+        await _userManager.UpdateAsync(user);
+
+        AuthLogMessages.CultureUpdateSucceeded(_logger, userId, culture, null);
 
         return Result<bool>.Success(true);
     }

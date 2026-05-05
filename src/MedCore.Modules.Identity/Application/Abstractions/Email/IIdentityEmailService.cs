@@ -5,5 +5,8 @@ using MedCore.Modules.Identity.Domain.Users;
 public interface IIdentityEmailService
 {
     Task SendConfirmationEmailAsync(
-        ApplicationUser user, string encodedToken, CancellationToken ct = default);
+        ApplicationUser user, 
+        string encodedToken, 
+        string culture,
+        CancellationToken ct = default);
 }

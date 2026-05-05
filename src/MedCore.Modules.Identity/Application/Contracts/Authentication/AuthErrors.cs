@@ -45,4 +45,7 @@ public static class AuthErrors
 
     public static readonly ResultError EmailAlreadyConfirmed =
         new("IDENTITY_AUTH_EMAIL_ALREADY_CONFIRMED", "Email address is already confirmed.");
+    
+    public static readonly ResultError UnsupportedCulture =
+        new("IDENTITY_AUTH_UNSUPPORTED_CULTURE", "The specified culture is not supported.");
 }

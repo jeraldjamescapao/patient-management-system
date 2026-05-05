@@ -26,6 +26,7 @@ public sealed class ResendConfirmationEmailTests : AuthServiceTestBase
             .SendConfirmationEmailAsync(
                 Arg.Any<ApplicationUser>(), 
                 Arg.Any<string>(), 
+                Arg.Any<string>(), 
                 Arg.Any<CancellationToken>());
     }
     
@@ -44,6 +45,7 @@ public sealed class ResendConfirmationEmailTests : AuthServiceTestBase
             .SendConfirmationEmailAsync(
                 Arg.Any<ApplicationUser>(), 
                 Arg.Any<string>(), 
+                Arg.Any<string>(), 
                 Arg.Any<CancellationToken>());
     }
     
@@ -61,7 +63,11 @@ public sealed class ResendConfirmationEmailTests : AuthServiceTestBase
             .Returns("raw-token");
         
         IdentityEmailService
-            .SendConfirmationEmailAsync(user, Arg.Any<string>(), Arg.Any<CancellationToken>())
+            .SendConfirmationEmailAsync(
+                user, 
+                Arg.Any<string>(), 
+                Arg.Any<string>(), 
+                Arg.Any<CancellationToken>())
             .Returns(Task.FromException(new EmailDeliveryException("SMTP failed.")));
 
         var result = await Sut.ResendConfirmationEmailAsync(Email);
@@ -85,7 +91,11 @@ public sealed class ResendConfirmationEmailTests : AuthServiceTestBase
             .Returns("raw-token");
         
         IdentityEmailService
-            .SendConfirmationEmailAsync(user, Arg.Any<string>(), Arg.Any<CancellationToken>())
+            .SendConfirmationEmailAsync(
+                user, 
+                Arg.Any<string>(), 
+                Arg.Any<string>(), 
+                Arg.Any<CancellationToken>())
             .Returns(Task.CompletedTask);
 
         var result = await Sut.ResendConfirmationEmailAsync(Email);
@@ -93,6 +103,10 @@ public sealed class ResendConfirmationEmailTests : AuthServiceTestBase
         result.IsSuccess.Should().BeTrue();
         await IdentityEmailService
             .Received(1)
-            .SendConfirmationEmailAsync(user, Arg.Any<string>(), Arg.Any<CancellationToken>());
+            .SendConfirmationEmailAsync(
+                user, 
+                Arg.Any<string>(), 
+                Arg.Any<string>(), 
+                Arg.Any<CancellationToken>());
     }
 }
