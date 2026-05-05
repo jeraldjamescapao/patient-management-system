@@ -230,6 +230,7 @@ public sealed class RegisterTests : AuthServiceTestBase
         result.IsSuccess.Should().BeTrue();
         result.Value!.Email.Should().Be(ValidRequest.Email);
         result.Value.FullName.Should().Be("Jerald James Capao Test");
+        result.Value!.Culture.Should().Be(SupportedCultures.Default);
         result.Value.Roles.Should().ContainSingle().Which.Should().Be("Patient");
         result.Value.AccessToken.Should().Be("access-token");
         result.Value.RawRefreshToken.Should().Be("raw-refresh-token");

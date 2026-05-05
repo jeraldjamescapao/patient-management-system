@@ -94,7 +94,7 @@ internal sealed class AuthService : IAuthService
             var (accessToken, rawRefreshToken) = await IssueTokenPairAsync(user, roles, ct);
             
             var encodedToken = await GenerateEncodedConfirmationTokenAsync(user);
-            var culture = _currentCultureService.Culture;
+            var culture = user.PreferredCulture ?? _currentCultureService.Culture;
             await _identityEmailService.SendConfirmationEmailAsync(user, encodedToken, culture, ct);
             
             await transaction.CommitAsync(ct);
@@ -105,6 +105,7 @@ internal sealed class AuthService : IAuthService
                 user.Id,
                 user.Email!,
                 user.FullName,
+                culture,
                 roles,
                 accessToken)
             {
@@ -156,12 +157,15 @@ internal sealed class AuthService : IAuthService
         var roles = await _userManager.GetRolesAsync(user);
         var (accessToken, rawRefreshToken) = await IssueTokenPairAsync(user, roles, ct);
         
+        var culture = user.PreferredCulture ?? _currentCultureService.Culture;
+        
         AuthLogMessages.LoginSucceeded(_logger, user.Id, user.Email!, null);
         
         return Result<LoginResponse>.Success(new LoginResponse(
             user.Id,
             user.Email!,
             user.FullName,
+            culture,
             roles,
             accessToken)
         {
@@ -309,7 +313,7 @@ internal sealed class AuthService : IAuthService
         try
         {
             var encodedToken = await GenerateEncodedConfirmationTokenAsync(user);
-            var culture = _currentCultureService.Culture;
+            var culture = user.PreferredCulture ?? _currentCultureService.Culture;
             await _identityEmailService.SendConfirmationEmailAsync(user, encodedToken, culture, ct);
         }
         catch (EmailDeliveryException ex)

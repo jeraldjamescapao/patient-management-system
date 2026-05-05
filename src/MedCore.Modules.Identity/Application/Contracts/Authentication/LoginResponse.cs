@@ -6,6 +6,7 @@ public sealed record LoginResponse(
     Guid UserId,
     string Email,
     string FullName,
+    string Culture,
     IList<string> Roles,
     string AccessToken)
 {
