@@ -66,7 +66,8 @@ internal sealed class AuthService : IAuthService
             request.FirstName,
             request.LastName,
             request.BirthDate,
-            createdBy: ApplicationUser.SelfRegisteredActor);
+            createdBy: ApplicationUser.SelfRegisteredActor,
+            request.Culture);
         
         await using var transaction = await _unitOfWork.BeginTransactionAsync(ct);
         try

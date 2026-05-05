@@ -48,8 +48,8 @@ knowing when and why to use it.
 
 ### Tests
 
-- 33 unit tests for `AuthService` covering all 8 flows
-- `RegisterTests` — email conflict, user creation failure, role assignment failure, email delivery failure, success
+- 35 unit tests for `AuthService` covering all 8 flows
+- `RegisterTests` — email conflict, user creation failure, role assignment failure, email delivery failure, no culture defaults to null, valid culture is set, success
 - `LoginTests` — user not found, account deactivated, email not confirmed, invalid password, success
 - `RefreshTests` — empty token, token not found, revoked without replacement, expired token, reuse detected (full family revocation), user not found, success
 - `LogoutTests` — empty token, token not found or inactive, valid token revoked
@@ -149,7 +149,7 @@ From the solution root:
 dotnet test
 ```
 
-Runs 33 unit tests across all 8 `AuthService` flows.
+Runs 35 unit tests across all 8 `AuthService` flows.
 
 ### API docs
 

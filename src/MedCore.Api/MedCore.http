@@ -29,7 +29,8 @@ Content-Type: {{ContentType}}
   "lastName": "Test",
   "email": "dayton43@ethereal.email",
   "password": "ThePasswordOfAllSeasons1!",
-  "birthDate": "1988-06-27"
+  "birthDate": "1988-06-27",
+  "culture": "fr"
 }
 
 ###

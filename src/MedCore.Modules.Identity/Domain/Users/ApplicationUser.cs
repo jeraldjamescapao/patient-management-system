@@ -1,5 +1,6 @@
 namespace MedCore.Modules.Identity.Domain.Users;
 
+using MedCore.Common.Localization;
 using Microsoft.AspNetCore.Identity;
 using MedCore.Common.Auditing;
 
@@ -30,7 +31,8 @@ public sealed class ApplicationUser : IdentityUser<Guid>, IAuditableEntity
         string firstName,
         string lastName,
         DateOnly birthDate,
-        string createdBy)
+        string createdBy,
+        string? preferredCulture)
     {
         Id = Guid.NewGuid();
         
@@ -39,6 +41,7 @@ public sealed class ApplicationUser : IdentityUser<Guid>, IAuditableEntity
         FirstName = firstName;
         LastName = lastName;
         BirthDate = birthDate;
+        PreferredCulture = preferredCulture;
         CreatedAtUtc = DateTimeOffset.UtcNow;
         ModifiedAtUtc = DateTimeOffset.UtcNow;
         CreatedBy = createdBy;
@@ -51,7 +54,8 @@ public sealed class ApplicationUser : IdentityUser<Guid>, IAuditableEntity
         string firstName,
         string lastName,
         DateOnly birthDate,
-        string createdBy)
+        string createdBy,
+        string? preferredCulture = null)
     {
         if (string.IsNullOrWhiteSpace(email))
             throw new ArgumentException("Email is required.");
@@ -61,6 +65,9 @@ public sealed class ApplicationUser : IdentityUser<Guid>, IAuditableEntity
             throw new ArgumentException("LastName is required.");
         if (birthDate > DateOnly.FromDateTime(DateTime.UtcNow))
             throw new ArgumentException("BirthDate cannot be in the future.");
+        if (preferredCulture is not null &&
+            !SupportedCultures.All.Contains(preferredCulture))
+            throw new ArgumentException("Unsupported culture.");
         if (string.IsNullOrWhiteSpace(createdBy))
             throw new ArgumentException("CreatedBy is required.");
         
@@ -69,7 +76,8 @@ public sealed class ApplicationUser : IdentityUser<Guid>, IAuditableEntity
             firstName.Trim(), 
             lastName.Trim(), 
             birthDate,
-            createdBy);
+            createdBy,
+            preferredCulture);
     }
     
     public void UpdateName(string firstName, string lastName, string modifiedBy)

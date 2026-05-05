@@ -3,6 +3,7 @@ namespace MedCore.Modules.Identity.Tests.Application.Services.AuthServiceTests;
 using Microsoft.AspNetCore.Identity;
 using NSubstitute;
 using FluentAssertions;
+using MedCore.Common.Localization;
 using MedCore.Common.Results;
 using MedCore.Common.Exceptions;
 using MedCore.Modules.Identity.Application.Contracts.Authentication;
@@ -111,6 +112,86 @@ public sealed class RegisterTests : AuthServiceTestBase
         result.ErrorType.Should().Be(ResultErrorType.ServiceUnavailable);
         result.Error!.Code.Should().Be("IDENTITY_AUTH_EMAIL_DELIVERY_FAILED");
         await Transaction.Received(1).RollbackAsync(Arg.Any<CancellationToken>());
+    }
+    
+    [Fact]
+    public async Task RegisterAsync_NoCultureProvided_PreferredCultureIsNull()
+    {
+        var request = ValidRequest with { Culture = null };
+
+        ApplicationUser? capturedUser = null;
+
+        UserManager
+            .FindByEmailAsync(request.Email)
+            .Returns((ApplicationUser?)null);
+
+        UserManager
+            .CreateAsync(Arg.Do<ApplicationUser>(u => capturedUser = u), request.Password)
+            .Returns(IdentityResult.Success);
+
+        UserManager
+            .AddToRoleAsync(Arg.Any<ApplicationUser>(), Arg.Any<string>())
+            .Returns(IdentityResult.Success);
+
+        UserManager
+            .GetRolesAsync(Arg.Any<ApplicationUser>())
+            .Returns(["Patient"]);
+
+        UserManager
+            .GenerateEmailConfirmationTokenAsync(Arg.Any<ApplicationUser>())
+            .Returns("raw-email-token");
+
+        IdentityEmailService
+            .SendConfirmationEmailAsync(
+                Arg.Any<ApplicationUser>(),
+                Arg.Any<string>(),
+                Arg.Any<string>(),
+                Arg.Any<CancellationToken>())
+            .Returns(Task.CompletedTask);
+
+        await Sut.RegisterAsync(request);
+
+        capturedUser!.PreferredCulture.Should().BeNull();
+    }
+    
+    [Fact]
+    public async Task RegisterAsync_ValidCultureProvided_PreferredCultureIsSet()
+    {
+        var request = ValidRequest with { Culture = SupportedCultures.French };
+
+        ApplicationUser? capturedUser = null;
+
+        UserManager
+            .FindByEmailAsync(request.Email)
+            .Returns((ApplicationUser?)null);
+
+        UserManager
+            .CreateAsync(Arg.Do<ApplicationUser>(u => capturedUser = u), request.Password)
+            .Returns(IdentityResult.Success);
+
+        UserManager
+            .AddToRoleAsync(Arg.Any<ApplicationUser>(), Arg.Any<string>())
+            .Returns(IdentityResult.Success);
+
+        UserManager
+            .GetRolesAsync(Arg.Any<ApplicationUser>())
+            .Returns(["Patient"]);
+
+        UserManager
+            .GenerateEmailConfirmationTokenAsync(Arg.Any<ApplicationUser>())
+            .Returns("raw-email-token");
+
+        IdentityEmailService
+            .SendConfirmationEmailAsync(
+                Arg.Any<ApplicationUser>(),
+                Arg.Any<string>(),
+                Arg.Any<string>(),
+                Arg.Any<CancellationToken>())
+            .Returns(Task.CompletedTask);
+
+        await Sut.RegisterAsync(request);
+
+        capturedUser!.PreferredCulture.Should().Be(SupportedCultures.French);
     }
 
     [Fact]

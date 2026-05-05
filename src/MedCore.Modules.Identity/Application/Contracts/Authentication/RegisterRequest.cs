@@ -8,4 +8,5 @@ public sealed record RegisterRequest(
     [Required] [MinLength(2)] [MaxLength(100)] string LastName,
     [Required] [EmailAddress] [MaxLength(256)] string Email,
     [Required] [MinLength(8)] [MaxLength(100)] string Password,
-    [PastDate] DateOnly BirthDate);
+    [PastDate] DateOnly BirthDate,
+    [MaxLength(10)] string? Culture = null);
