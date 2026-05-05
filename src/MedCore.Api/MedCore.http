@@ -125,6 +125,15 @@ Authorization: Bearer {{AccessToken}}
 
 ###
 
+### Users
+
+### GET current user profile
+
+GET https://localhost:7212/api/v1/users/me
+Authorization: Bearer {{AccessToken}}
+
+###
+
 # ─────────────────────────────────────────
 # Admin — Refresh Translation Cache
 # Clears and reloads the in-memory translation cache from the database.

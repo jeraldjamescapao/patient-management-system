@@ -3,6 +3,7 @@ using MedCore.Common.Configuration;
 using MedCore.Common.Modules;
 using MedCore.Infrastructure;
 using MedCore.Modules.Identity;
+using MedCore.Modules.Users;
 using Scalar.AspNetCore;
 using Serilog;
 
@@ -27,7 +28,8 @@ try
     
     builder.Services.RegisterModules(
         builder.Configuration,
-        typeof(IdentityModule).Assembly);
+        typeof(IdentityModule).Assembly,
+        typeof(UsersModule).Assembly);
 
     builder.Services.AddInfrastructure(builder.Configuration);
 

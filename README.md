@@ -46,9 +46,18 @@ knowing when and why to use it.
 - `PUT /api/v1/auth/culture` — authenticated users can set their preferred language
 - `POST /api/v1/admin/translations/refresh` — Admin only, reloads translation cache
 
+### Users Module
+
+- `GET /api/v1/users/me` — authenticated users can retrieve their own account profile
+- Profile data includes name, birth date, preferred culture, and account status
+- User ID resolved from the JWT token — never accepted from the URL to prevent Insecure Direct Object Reference (IDOR)
+- Structured logging with EventIds starting at 3001
+
 ### Tests
 
-- 35 unit tests for `AuthService` covering all 8 flows
+37 unit tests total across two test projects.
+
+**AuthService — 35 tests, 8 flows**
 - `RegisterTests` — email conflict, user creation failure, role assignment failure, email delivery failure, no culture defaults to null, valid culture is set, success
 - `LoginTests` — user not found, account deactivated, email not confirmed, invalid password, success
 - `RefreshTests` — empty token, token not found, revoked without replacement, expired token, reuse detected (full family revocation), user not found, success
@@ -57,7 +66,11 @@ knowing when and why to use it.
 - `ConfirmEmailTests` — user not found, already confirmed, invalid token, success
 - `ResendConfirmationEmailTests` — user not found (silent), already confirmed (silent), email delivery failure, success
 - `UpdatePreferredCultureTests` — unsupported culture, user not found, valid base culture, valid regional culture
-- xUnit, NSubstitute, FluentAssertions
+
+**UserService — 2 tests**
+- `GetCurrentUserTests` — user not found, user exists with correct shape
+
+xUnit, NSubstitute, FluentAssertions
 
 ## Tech Stack
 
@@ -88,6 +101,13 @@ scale. It signals the module is ready for microservice extraction.
 following the Interface Segregation Principle. Email service depends only on
 `IMessageLocalizer`. Startup warmup and admin refresh depend only on
 `ILocalizerCache`. One implementation (`DbMessageLocalizer`) satisfies both.
+
+The Users module accesses `ApplicationUser` via `UserManager<ApplicationUser>` and shares
+the `identity.users` table with the Identity module. This is an accepted modular monolith
+tradeoff. Both modules have clearly separated responsibilities — Identity owns credentials
+and tokens, Users owns profile data. On extraction, Identity publishes a `UserRegisteredEvent`
+and Users maintains its own copy of profile data in a separate database. The boundary is
+validated now so the code does not need to change when the data layer does.
 
 The data layer uses EF Core. Switching providers requires updating `UseNpgsql`
 to `UseSqlServer` in each `DbContext` registration and regenerating migrations.
@@ -149,7 +169,7 @@ From the solution root:
 dotnet test
 ```
 
-Runs 35 unit tests across all 8 `AuthService` flows.
+Runs 37 unit tests across all `AuthService` and `UserService` flows.
 
 ### API docs
 
@@ -187,9 +207,8 @@ and override the `Email` section in `appsettings.Development.json`.
 
 ## Status
 
-Actively in development. Identity module and internationalization foundation
-are complete with unit tests in place. Patients, Doctors, and Appointments
-modules coming next.
+Actively in development. Identity module, internationalization foundation, and Users module
+are complete with unit tests in place. Patients, Doctors, and Appointments modules coming next.
 
 ## About the Author
 

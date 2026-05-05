@@ -1,0 +1,34 @@
+namespace MedCore.Modules.Users.Presentation.Controllers;
+
+using Asp.Versioning;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using MedCore.Common.Controllers;
+using MedCore.Common.Services;
+using MedCore.Modules.Users.Application.Abstractions;
+using MedCore.Modules.Users.Application.Contracts;
+
+[Authorize]
+[ApiVersion("1")]
+[Route("api/v{version:apiVersion}/users")]
+public sealed class UsersController : BaseApiController
+{
+    private readonly IUserService _userService;
+    private readonly ICurrentUserService _currentUserService;
+    
+    public UsersController(IUserService userService, ICurrentUserService currentUserService)
+    {
+        _userService = userService;
+        _currentUserService = currentUserService;
+    }
+    
+    [HttpGet("me")]
+    public async Task<IActionResult> GetCurrentUserAsync(CancellationToken ct)
+    {
+        if (!Guid.TryParse(_currentUserService.UserId, out var userId))
+            return ToActionResult(Common.Results.Result<bool>.Unauthorized(UserErrors.InvalidToken));
+
+        var result = await _userService.GetCurrentUserAsync(userId, ct);
+        return ToActionResult(result);
+    }
+}
