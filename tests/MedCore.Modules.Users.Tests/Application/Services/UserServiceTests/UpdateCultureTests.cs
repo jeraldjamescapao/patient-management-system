@@ -1,4 +1,4 @@
-namespace MedCore.Modules.Identity.Tests.Application.Services.AuthServiceTests;
+namespace MedCore.Modules.Users.Tests.Application.Services.UserServiceTests;
 
 using FluentAssertions;
 using MedCore.Common.Localization;
@@ -8,39 +8,39 @@ using Microsoft.AspNetCore.Identity;
 using NSubstitute;
 using Xunit;
 
-public sealed class UpdatePreferredCultureTests : AuthServiceTestBase
+public sealed class UpdateCultureTests : UserServiceTestBase
 {
     private static readonly Guid UserId = Guid.NewGuid();
 
     [Fact]
-    public async Task UpdatePreferredCultureAsync_UnsupportedCulture_ReturnsValidation()
+    public async Task UpdateCultureAsync_UnsupportedCulture_ReturnsValidation()
     {
-        var result = await Sut.UpdatePreferredCultureAsync(UserId, "xxxyyyzzz");
+        var result = await Sut.UpdateCultureAsync(UserId, "xxxyyyzzz");
 
         result.IsFailure.Should().BeTrue();
         result.ErrorType.Should().Be(ResultErrorType.Validation);
-        result.Error!.Code.Should().Be("IDENTITY_AUTH_UNSUPPORTED_CULTURE");
+        result.Error!.Code.Should().Be("USERS_UNSUPPORTED_CULTURE");
         await UserManager
             .DidNotReceive()
             .FindByIdAsync(Arg.Any<string>());
     }
-
+    
     [Fact]
-    public async Task UpdatePreferredCultureAsync_UserNotFound_ReturnsNotFound()
+    public async Task UpdateCultureAsync_UserNotFound_ReturnsNotFound()
     {
         UserManager
             .FindByIdAsync(UserId.ToString())
             .Returns((ApplicationUser?)null);
 
-        var result = await Sut.UpdatePreferredCultureAsync(UserId, SupportedCultures.French);
+        var result = await Sut.UpdateCultureAsync(UserId, SupportedCultures.French);
 
         result.IsFailure.Should().BeTrue();
         result.ErrorType.Should().Be(ResultErrorType.NotFound);
-        result.Error!.Code.Should().Be("IDENTITY_AUTH_USER_NOT_FOUND");
+        result.Error!.Code.Should().Be("USERS_USER_NOT_FOUND");
     }
-
+    
     [Fact]
-    public async Task UpdatePreferredCultureAsync_ValidCulture_UpdatesAndSucceeds()
+    public async Task UpdateCultureAsync_ValidCulture_UpdatesAndSucceeds()
     {
         var user = CreateUser();
 
@@ -52,7 +52,7 @@ public sealed class UpdatePreferredCultureTests : AuthServiceTestBase
             .UpdateAsync(user)
             .Returns(IdentityResult.Success);
 
-        var result = await Sut.UpdatePreferredCultureAsync(UserId, SupportedCultures.French);
+        var result = await Sut.UpdateCultureAsync(UserId, SupportedCultures.French);
 
         result.IsSuccess.Should().BeTrue();
         user.PreferredCulture.Should().Be(SupportedCultures.French);
@@ -63,9 +63,9 @@ public sealed class UpdatePreferredCultureTests : AuthServiceTestBase
             .Received(1)
             .InvalidateForUser(UserId);
     }
-
+    
     [Fact]
-    public async Task UpdatePreferredCultureAsync_RegionalCulture_AcceptsAndSucceeds()
+    public async Task UpdateCultureAsync_RegionalCulture_AcceptsAndSucceeds()
     {
         var user = CreateUser();
 
@@ -77,7 +77,7 @@ public sealed class UpdatePreferredCultureTests : AuthServiceTestBase
             .UpdateAsync(user)
             .Returns(IdentityResult.Success);
 
-        var result = await Sut.UpdatePreferredCultureAsync(UserId, SupportedCultures.FrenchSwitzerland);
+        var result = await Sut.UpdateCultureAsync(UserId, SupportedCultures.FrenchSwitzerland);
 
         result.IsSuccess.Should().BeTrue();
         user.PreferredCulture.Should().Be(SupportedCultures.FrenchSwitzerland);

@@ -89,20 +89,6 @@ public sealed class AuthController : BaseApiController
         return NoContent();
     }
     
-    [Authorize]
-    [HttpPut("culture")]
-    public async Task<IActionResult> UpdatePreferredCultureAsync(
-        [FromBody] UpdateCultureRequest request, CancellationToken ct)
-    {
-        if (!Guid.TryParse(_currentUserService.UserId, out var userId))
-            return ToActionResult(Result<bool>.Unauthorized(AuthErrors.InvalidCredentials));
-        
-        var result = await _authService.UpdatePreferredCultureAsync(userId, request.Culture, ct);
-        if (result.IsFailure) return ToActionResult(result);
-
-        return NoContent();
-    }
-    
     [HttpGet("confirm-email")]
     public async Task<IActionResult> ConfirmEmailAsync(
         [FromQuery] Guid userId,

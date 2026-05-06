@@ -177,26 +177,4 @@ public static class AuthLogMessages
             "Confirmation email resent successfully for user {UserId}.");
     
     #endregion
-    
-    #region Culture
-    
-    public static readonly Action<ILogger, Guid, string, Exception?> CultureUpdateSucceeded =
-        LoggerMessage.Define<Guid, string>(
-            LogLevel.Information,
-            new EventId(2060, "CultureUpdateSucceeded"),
-            "User {UserId} updated preferred culture to '{Culture}'.");
-
-    public static readonly Action<ILogger, Guid, string, Exception?> CultureUpdateUnsupported =
-        LoggerMessage.Define<Guid, string>(
-            LogLevel.Warning,
-            new EventId(2061, "CultureUpdateUnsupported"),
-            "Culture update rejected for user {UserId}: '{Culture}' is not supported.");
-
-    public static readonly Action<ILogger, Guid, Exception?> CultureUpdateUserNotFound =
-        LoggerMessage.Define<Guid>(
-            LogLevel.Warning,
-            new EventId(2062, "CultureUpdateUserNotFound"),
-            "Culture update failed: user {UserId} not found.");
-    
-    #endregion
 }

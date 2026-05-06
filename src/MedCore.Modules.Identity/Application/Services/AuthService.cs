@@ -4,9 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using MedCore.Common.Caching;
 using MedCore.Common.Exceptions;
-using MedCore.Common.Localization;
 using MedCore.Common.Results;
 using MedCore.Common.Services;
 using MedCore.Modules.Identity.Application.Abstractions.Authentication;
@@ -25,7 +23,6 @@ internal sealed class AuthService : IAuthService
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly ICurrentCultureService _currentCultureService;
-    private readonly IUserCultureCache _userCultureCache;
     private readonly IJwtTokenService _jwtTokenService;
     private readonly IRefreshTokenRepository _refreshTokenRepository;
     private readonly IIdentityEmailService _identityEmailService;
@@ -36,7 +33,6 @@ internal sealed class AuthService : IAuthService
     public AuthService(
         UserManager<ApplicationUser> userManager,
         ICurrentCultureService currentCultureService,
-        IUserCultureCache userCultureCache,
         IJwtTokenService jwtTokenService,
         IRefreshTokenRepository refreshTokenRepository,
         IIdentityEmailService identityEmailService,
@@ -46,7 +42,6 @@ internal sealed class AuthService : IAuthService
     {
         _userManager = userManager;
         _currentCultureService = currentCultureService;
-        _userCultureCache = userCultureCache;
         _jwtTokenService = jwtTokenService;
         _refreshTokenRepository = refreshTokenRepository;
         _identityEmailService = identityEmailService;
@@ -327,32 +322,6 @@ internal sealed class AuthService : IAuthService
         }
         
         AuthLogMessages.ResendConfirmationSucceeded(_logger, user.Id, null);
-
-        return Result<bool>.Success(true);
-    }
-    
-    public async Task<Result<bool>> UpdatePreferredCultureAsync(
-        Guid userId, string culture, CancellationToken ct = default)
-    {
-        if (!SupportedCultures.All.Contains(culture))
-        {
-            AuthLogMessages.CultureUpdateUnsupported(_logger, userId, culture, null);
-            return Result<bool>.Validation(AuthErrors.UnsupportedCulture);
-        }
-
-        var user = await _userManager.FindByIdAsync(userId.ToString());
-        if (user is null)
-        {
-            AuthLogMessages.CultureUpdateUserNotFound(_logger, userId, null);
-            return Result<bool>.NotFound(AuthErrors.UserNotFound);
-        }
-
-        user.UpdatePreferredCulture(culture, user.Id.ToString());
-        await _userManager.UpdateAsync(user);
-        
-        _userCultureCache.InvalidateForUser(userId);
-
-        AuthLogMessages.CultureUpdateSucceeded(_logger, userId, culture, null);
 
         return Result<bool>.Success(true);
     }

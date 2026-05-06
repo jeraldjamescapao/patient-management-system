@@ -32,4 +32,17 @@ public sealed class UsersController : BaseApiController
         var result = await _userService.GetCurrentUserAsync(userId, ct);
         return ToActionResult(result);
     }
+    
+    [HttpPut("me/culture")]
+    public async Task<IActionResult> UpdateCultureAsync(
+        [FromBody] UpdateCultureRequest request, CancellationToken ct)
+    {
+        if (!Guid.TryParse(_currentUserService.UserId, out var userId))
+            return ToActionResult(Result<bool>.Unauthorized(UserErrors.InvalidToken));
+
+        var result = await _userService.UpdateCultureAsync(userId, request.Culture, ct);
+        if (result.IsFailure) return ToActionResult(result);
+
+        return NoContent();
+    }
 }

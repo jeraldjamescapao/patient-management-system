@@ -6,4 +6,5 @@ using MedCore.Modules.Users.Application.Contracts;
 public interface IUserService
 {
     Task<Result<UserResponse>> GetCurrentUserAsync(Guid userId, CancellationToken ct = default);
+    Task<Result<bool>> UpdateCultureAsync(Guid userId, string culture, CancellationToken ct = default);
 }

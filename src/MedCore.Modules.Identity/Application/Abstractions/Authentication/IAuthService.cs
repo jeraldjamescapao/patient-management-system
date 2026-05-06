@@ -12,5 +12,4 @@ public interface IAuthService
     Task<Result<bool>> LogoutAllAsync(Guid userId, CancellationToken ct = default);
     Task<Result<bool>> ConfirmEmailAsync(Guid userId, string token, CancellationToken ct = default);
     Task<Result<bool>> ResendConfirmationEmailAsync(string email, CancellationToken ct = default);
-    Task<Result<bool>> UpdatePreferredCultureAsync(Guid userId, string culture, CancellationToken ct = default);
 }
