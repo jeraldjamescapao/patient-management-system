@@ -11,6 +11,11 @@ internal sealed class MemoryUserCultureCache : IUserCultureCache
     {
         _cache = cache;
     }
+    
+    public bool TryGetCultureForUser(Guid userId, out string? culture)
+    {
+        return _cache.TryGetValue(CacheKeys.UserCulture(userId), out culture);
+    }
 
     public void SetCultureForUser(Guid userId, string culture)
     {

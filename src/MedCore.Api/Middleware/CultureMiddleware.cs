@@ -5,7 +5,6 @@ using MedCore.Common.Localization;
 using MedCore.Common.Services;
 using MedCore.Modules.Identity.Domain.Users;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Caching.Memory;
 using System.IdentityModel.Tokens.Jwt;
 
 internal sealed class CultureMiddleware
@@ -21,18 +20,16 @@ internal sealed class CultureMiddleware
         HttpContext context,
         ICurrentCultureService currentCultureService,
         UserManager<ApplicationUser> userManager,
-        IMemoryCache cache,
         IUserCultureCache userCultureCache)
     {
-        var culture = await ResolveAsync(context, userManager, cache, userCultureCache);
+        var culture = await ResolveAsync(context, userManager, userCultureCache);
         currentCultureService.SetCulture(culture);
         await _next(context);
     }
     
-    private async Task<string> ResolveAsync(
+    private static async Task<string> ResolveAsync(
         HttpContext context,
         UserManager<ApplicationUser> userManager,
-        IMemoryCache cache,
         IUserCultureCache userCultureCache)
     {
         if (context.User.Identity?.IsAuthenticated != true)
@@ -46,7 +43,7 @@ internal sealed class CultureMiddleware
         
         var cacheKey = CacheKeys.UserCulture(userId);
 
-        if (cache.TryGetValue(cacheKey, out string? cached) && cached is not null)
+        if (userCultureCache.TryGetCultureForUser(userId, out var cached) && cached is not null)
             return cached;
 
         // NOTE: Cache miss triggers a DB query via UserManager.
