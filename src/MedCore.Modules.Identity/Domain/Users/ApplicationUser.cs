@@ -112,6 +112,39 @@ public sealed class ApplicationUser : IdentityUser<Guid>, IAuditableEntity
         ModifiedAtUtc = DateTimeOffset.UtcNow;   
         ModifiedBy = modifiedBy;
     }
+
+    public void UpdateProfile(
+        string firstName, 
+        string lastName, 
+        DateOnly birthDate, 
+        string modifiedBy)
+    {
+        if (string.IsNullOrWhiteSpace(firstName))
+            throw new DomainException("DOMAIN_USER_INVALID_FIRST_NAME", "FirstName is required.");
+        if (string.IsNullOrWhiteSpace(lastName))
+            throw new DomainException("DOMAIN_USER_INVALID_LAST_NAME", "LastName is required.");
+        if (birthDate > DateOnly.FromDateTime(DateTime.UtcNow))
+            throw new DomainException("DOMAIN_USER_INVALID_BIRTH_DATE", "BirthDate cannot be in the future.");
+        if (string.IsNullOrWhiteSpace(modifiedBy))
+            throw new DomainException("DOMAIN_USER_INVALID_MODIFIED_BY", "ModifiedBy is required.");
+        
+        var nameChanged = firstName.Trim() != FirstName || lastName.Trim() != LastName;
+        var birthDateChanged = birthDate != BirthDate;
+        
+        if (!nameChanged && !birthDateChanged) return;
+        
+        if (nameChanged)
+        {
+            FirstName = firstName.Trim();
+            LastName = lastName.Trim();
+        }
+
+        if (birthDateChanged)
+            BirthDate = birthDate;
+        
+        ModifiedAtUtc = DateTimeOffset.UtcNow;
+        ModifiedBy = modifiedBy;
+    }
     
     public void UpdatePreferredCulture(string culture, string modifiedBy)
     {

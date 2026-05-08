@@ -72,16 +72,22 @@ public static class UserLogMessages
 
     #region Update Phone
 
+    public static readonly Action<ILogger, Guid, Exception?> UpdatePhoneUserNotFound =
+        LoggerMessage.Define<Guid>(
+            LogLevel.Warning,
+            new EventId(3010, "UpdatePhoneUserNotFound"),
+            "Phone update failed: user {UserId} not found.");
+    
     public static readonly Action<ILogger, Guid, Exception?> UpdatePhoneFailed =
         LoggerMessage.Define<Guid>(
             LogLevel.Warning,
-            new EventId(3010, "UpdatePhoneFailed"),
+            new EventId(3011, "UpdatePhoneFailed"),
             "Phone number update failed for user {UserId}: identity update returned errors.");
 
     public static readonly Action<ILogger, Guid, Exception?> UpdatePhoneSucceeded =
         LoggerMessage.Define<Guid>(
             LogLevel.Information,
-            new EventId(3011, "UpdatePhoneSucceeded"),
+            new EventId(3012, "UpdatePhoneSucceeded"),
             "Phone number updated successfully for user {UserId}.");
 
     #endregion

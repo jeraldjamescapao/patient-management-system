@@ -83,8 +83,8 @@ internal sealed class UserService : IUserService
             return Result<UserResponse>.NotFound(UserErrors.UserNotFound);
         }
 
-        user.UpdateName(request.FirstName, request.LastName, userId.ToString());
-        user.UpdateBirthDate(request.BirthDate, userId.ToString());
+        user.UpdateProfile(
+            request.FirstName, request.LastName, request.BirthDate, userId.ToString());
 
         var updateResult = await _userManager.UpdateAsync(user);
         if (!updateResult.Succeeded)
@@ -104,7 +104,7 @@ internal sealed class UserService : IUserService
         var user = await _userManager.FindByIdAsync(userId.ToString());
         if (user is null)
         {
-            UserLogMessages.UpdatePhoneFailed(_logger, userId, null);
+            UserLogMessages.UpdatePhoneUserNotFound(_logger, userId, null);
             return Result<bool>.NotFound(UserErrors.UserNotFound);
         }
 
