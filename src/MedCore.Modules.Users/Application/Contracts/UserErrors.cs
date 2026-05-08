@@ -13,6 +13,9 @@ public static class UserErrors
     public static readonly ResultError UnsupportedCulture =
         new("USERS_UNSUPPORTED_CULTURE", "The specified culture is not supported.");
     
+    public static readonly ResultError CultureUpdateFailed =
+        new("USERS_CULTURE_UPDATE_FAILED", "Failed to update culture.");
+    
     public static readonly ResultError ProfileUpdateFailed =
         new("USERS_UPDATE_FAILED", "Failed to update user profile.");
 

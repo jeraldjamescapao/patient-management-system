@@ -58,7 +58,13 @@ internal sealed class UserService : IUserService
         }
 
         user.UpdatePreferredCulture(culture, userId.ToString());
-        await _userManager.UpdateAsync(user);
+        
+        var updateResult = await _userManager.UpdateAsync(user);
+        if (!updateResult.Succeeded)
+        {
+            UserLogMessages.UpdateCultureFailed(_logger, userId, null);
+            return Result<bool>.Internal(UserErrors.CultureUpdateFailed);
+        }
 
         _userCultureCache.InvalidateForUser(userId);
 

@@ -40,6 +40,33 @@ public sealed class UpdateCultureTests : UserServiceTestBase
     }
     
     [Fact]
+    public async Task UpdateCultureAsync_IdentityUpdateFails_ReturnsInternal()
+    {
+        var user = CreateUser();
+
+        UserManager
+            .FindByIdAsync(UserId.ToString())
+            .Returns(user);
+
+        UserManager
+            .UpdateAsync(user)
+            .Returns(IdentityResult.Failed(new IdentityError
+            {
+                Code = "CultureError",
+                Description = "Culture update failed."
+            }));
+
+        var result = await Sut.UpdateCultureAsync(UserId, SupportedCultures.French);
+
+        result.IsFailure.Should().BeTrue();
+        result.ErrorType.Should().Be(ResultErrorType.Internal);
+        result.Error!.Code.Should().Be("USERS_CULTURE_UPDATE_FAILED");
+        UserCultureCache
+            .DidNotReceive()
+            .InvalidateForUser(UserId);
+    }
+    
+    [Fact]
     public async Task UpdateCultureAsync_ValidCulture_UpdatesAndSucceeds()
     {
         var user = CreateUser();
