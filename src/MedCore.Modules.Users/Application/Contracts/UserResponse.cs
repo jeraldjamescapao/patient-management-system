@@ -8,6 +8,7 @@ public sealed record UserResponse(
     string FullName,
     DateOnly BirthDate,
     string? Culture,
+    string? PhoneNumber,
     bool IsActive,
     DateTimeOffset CreatedAtUtc,
     DateTimeOffset ModifiedAtUtc);

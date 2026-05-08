@@ -52,10 +52,13 @@ knowing when and why to use it.
 - User ID resolved from the JWT token — never accepted from the URL to prevent Insecure Direct Object Reference (IDOR)
 - Structured logging with EventIds starting at 3001
 - `PUT /api/v1/users/me/culture` — authenticated users can update their preferred language
+- `PUT /api/v1/users/me/profile` — authenticated users can update their name and birth date
+  > Note: in clinical systems, name and birth date changes are identity-critical and typically require admin approval. In MedCore, self-service edits are permitted at the account level. Clinical records (future Patients module) will enforce stricter controls.
+- `PUT /api/v1/users/me/phone` — authenticated users can update their phone number (confirmation via SMS is planned, not yet implemented)
 
 ### Tests
 
-37 unit tests total across two test projects.
+43 unit tests total across two test projects.
 
 **AuthService — 31 tests, 7 flows**
 - `RegisterTests` — email conflict, user creation failure, role assignment failure, email delivery failure, no culture defaults to null, valid culture is set, success
@@ -66,9 +69,11 @@ knowing when and why to use it.
 - `ConfirmEmailTests` — user not found, already confirmed, invalid token, success
 - `ResendConfirmationEmailTests` — user not found (silent), already confirmed (silent), email delivery failure, success
 
-**UserService — 6 tests**
+**UserService — 12 tests, 4 flows**
 - `GetCurrentUserTests` — user not found, user exists with correct shape
 - `UpdateCultureTests` — unsupported culture, user not found, valid base culture, valid regional culture
+- `UpdateProfileTests` — user not found, identity update fails, valid request returns updated profile
+- `UpdatePhoneTests` — user not found, identity update fails, valid phone succeeds
 
 xUnit, NSubstitute, FluentAssertions
 
@@ -169,7 +174,7 @@ From the solution root:
 dotnet test
 ```
 
-Runs 37 unit tests across all `AuthService` and `UserService` flows.
+Runs 43 unit tests across all `AuthService` and `UserService` flows.
 
 ### API docs
 

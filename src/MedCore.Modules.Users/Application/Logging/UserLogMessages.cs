@@ -41,4 +41,36 @@ public static class UserLogMessages
             "User {UserId} updated preferred culture to '{Culture}'.");
 
     #endregion
+    
+    #region Update Profile
+
+    public static readonly Action<ILogger, Guid, Exception?> UpdateProfileFailed =
+        LoggerMessage.Define<Guid>(
+            LogLevel.Warning,
+            new EventId(3006, "UpdateProfileFailed"),
+            "Profile update failed for user {UserId}: identity update returned errors.");
+
+    public static readonly Action<ILogger, Guid, Exception?> UpdateProfileSucceeded =
+        LoggerMessage.Define<Guid>(
+            LogLevel.Information,
+            new EventId(3007, "UpdateProfileSucceeded"),
+            "Profile updated successfully for user {UserId}.");
+
+    #endregion
+
+    #region Update Phone
+
+    public static readonly Action<ILogger, Guid, Exception?> UpdatePhoneFailed =
+        LoggerMessage.Define<Guid>(
+            LogLevel.Warning,
+            new EventId(3008, "UpdatePhoneFailed"),
+            "Phone number update failed for user {UserId}: identity update returned errors.");
+
+    public static readonly Action<ILogger, Guid, Exception?> UpdatePhoneSucceeded =
+        LoggerMessage.Define<Guid>(
+            LogLevel.Information,
+            new EventId(3009, "UpdatePhoneSucceeded"),
+            "Phone number updated successfully for user {UserId}.");
+
+    #endregion
 }

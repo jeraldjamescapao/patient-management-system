@@ -138,6 +138,44 @@ Authorization: Bearer {{AccessToken}}
 ###
 
 # ─────────────────────────────────────────
+# Users — Update Profile
+# Updates the authenticated user's name and birth date.
+# Note: name and birth date changes are audit-logged.
+# Requires: valid Bearer token.
+# Returns: 200 with updated user profile.
+# ─────────────────────────────────────────
+
+PUT {{MedCore_HostAddress}}/api/v1/users/me/profile
+Content-Type: {{ContentType}}
+Authorization: Bearer {{AccessToken}}
+
+{
+  "firstName": "Jerald James Capao",
+  "lastName": "Test Update",
+  "birthDate": "1965-10-10"
+}
+
+###
+
+# ─────────────────────────────────────────
+# Users — Update Phone Number
+# Updates the authenticated user's phone number.
+# Phone number confirmation (SMS) is not yet implemented.
+# Requires: valid Bearer token.
+# Returns: 204 No Content.
+# ─────────────────────────────────────────
+
+PUT {{MedCore_HostAddress}}/api/v1/users/me/phone
+Content-Type: {{ContentType}}
+Authorization: Bearer {{AccessToken}}
+
+{
+  "phoneNumber": "+41 79 123 45 67"
+}
+
+###
+
+# ─────────────────────────────────────────
 # Admin — Refresh Translation Cache
 # Clears and reloads the in-memory translation cache from the database.
 # Use this after updating a translation row directly in the DB.

@@ -66,6 +66,57 @@ internal sealed class UserService : IUserService
 
         return Result<bool>.Success(true);
     }
+    
+    public async Task<Result<UserResponse>> UpdateProfileAsync(
+        Guid userId, UpdateProfileRequest request, CancellationToken ct = default)
+    {
+        var user = await _userManager.FindByIdAsync(userId.ToString());
+        if (user is null)
+        {
+            UserLogMessages.UpdateProfileFailed(_logger, userId, null);
+            return Result<UserResponse>.NotFound(UserErrors.UserNotFound);
+        }
+
+        user.UpdateName(request.FirstName, request.LastName, userId.ToString());
+        user.UpdateBirthDate(request.BirthDate, userId.ToString());
+
+        var updateResult = await _userManager.UpdateAsync(user);
+        if (!updateResult.Succeeded)
+        {
+            UserLogMessages.UpdateProfileFailed(_logger, userId, null);
+            return Result<UserResponse>.Internal(UserErrors.ProfileUpdateFailed);
+        }
+
+        UserLogMessages.UpdateProfileSucceeded(_logger, userId, null);
+
+        return Result<UserResponse>.Success(MapToResponse(user));
+    }
+    
+    public async Task<Result<bool>> UpdatePhoneAsync(
+        Guid userId, string? phoneNumber, CancellationToken ct = default)
+    {
+        var user = await _userManager.FindByIdAsync(userId.ToString());
+        if (user is null)
+        {
+            UserLogMessages.UpdatePhoneFailed(_logger, userId, null);
+            return Result<bool>.NotFound(UserErrors.UserNotFound);
+        }
+
+        var updateResult = await _userManager.SetPhoneNumberAsync(user, phoneNumber);
+        if (!updateResult.Succeeded)
+        {
+            UserLogMessages.UpdatePhoneFailed(_logger, userId, null);
+            return Result<bool>.Internal(UserErrors.PhoneUpdateFailed);
+        }
+        
+        // TODO: send SMS verification code and require confirmation before marking
+        // PhoneNumberConfirmed = true. SetPhoneNumberAsync already resets
+        // PhoneNumberConfirmed to false — verification step plugs in here.
+
+        UserLogMessages.UpdatePhoneSucceeded(_logger, userId, null);
+
+        return Result<bool>.Success(true);
+    }
 
     private static UserResponse MapToResponse(ApplicationUser user)
     {
@@ -77,6 +128,7 @@ internal sealed class UserService : IUserService
             user.FullName,
             user.BirthDate,
             user.PreferredCulture,
+            user.PhoneNumber,
             user.IsActive,
             user.CreatedAtUtc,
             user.ModifiedAtUtc);
