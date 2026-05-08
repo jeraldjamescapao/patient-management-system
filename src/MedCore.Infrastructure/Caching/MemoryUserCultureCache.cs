@@ -12,8 +12,11 @@ internal sealed class MemoryUserCultureCache : IUserCultureCache
         _cache = cache;
     }
 
-    public void InvalidateForUser(Guid userId)
+    public void SetCultureForUser(Guid userId, string culture)
     {
-        _cache.Remove(CacheKeys.UserCulture(userId));
+        _cache.Set(CacheKeys.UserCulture(userId), culture, new MemoryCacheEntryOptions
+        {
+            SlidingExpiration = CacheKeys.UserCultureExpiry
+        });
     }
 }

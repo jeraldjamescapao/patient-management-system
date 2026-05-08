@@ -21,9 +21,10 @@ internal sealed class CultureMiddleware
         HttpContext context,
         ICurrentCultureService currentCultureService,
         UserManager<ApplicationUser> userManager,
-        IMemoryCache cache)
+        IMemoryCache cache,
+        IUserCultureCache userCultureCache)
     {
-        var culture = await ResolveAsync(context, userManager, cache);
+        var culture = await ResolveAsync(context, userManager, cache, userCultureCache);
         currentCultureService.SetCulture(culture);
         await _next(context);
     }
@@ -31,7 +32,8 @@ internal sealed class CultureMiddleware
     private static async Task<string> ResolveAsync(
         HttpContext context,
         UserManager<ApplicationUser> userManager,
-        IMemoryCache cache)
+        IMemoryCache cache,
+        IUserCultureCache userCultureCache)
     {
         if (context.User.Identity?.IsAuthenticated != true)
             return ResolveFromHeader(context.Request.Headers.AcceptLanguage.ToString());
@@ -47,13 +49,15 @@ internal sealed class CultureMiddleware
         if (cache.TryGetValue(cacheKey, out string? cached) && cached is not null)
             return cached;
 
+        // NOTE: Cache miss triggers a DB query via UserManager.
+        // This happens on the first request, and immediately after UpdateCultureAsync sets
+        // a fresh cache entry. In practice, the cache is warm for 30 minutes after any
+        // culture update, so this path is rare. If traffic grows significantly,
+        // the cache will be pre-warmed at login time.
         var user = await userManager.FindByIdAsync(userId.ToString());
         var resolved = ResolveFromPreference(user?.PreferredCulture);
 
-        cache.Set(cacheKey, resolved, new MemoryCacheEntryOptions
-        {
-            SlidingExpiration = TimeSpan.FromMinutes(30)
-        });
+        userCultureCache.SetCultureForUser(userId, resolved);
 
         return resolved;
     }

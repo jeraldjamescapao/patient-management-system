@@ -66,7 +66,7 @@ internal sealed class UserService : IUserService
             return Result<bool>.Internal(UserErrors.CultureUpdateFailed);
         }
 
-        _userCultureCache.InvalidateForUser(userId);
+        _userCultureCache.SetCultureForUser(userId, culture);
 
         UserLogMessages.UpdateCultureSucceeded(_logger, userId, culture, null);
 

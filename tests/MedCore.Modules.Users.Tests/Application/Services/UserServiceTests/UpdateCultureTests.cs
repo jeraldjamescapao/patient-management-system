@@ -63,7 +63,7 @@ public sealed class UpdateCultureTests : UserServiceTestBase
         result.Error!.Code.Should().Be("USERS_CULTURE_UPDATE_FAILED");
         UserCultureCache
             .DidNotReceive()
-            .InvalidateForUser(UserId);
+            .SetCultureForUser(UserId, Arg.Any<string>());
     }
     
     [Fact]
@@ -88,7 +88,7 @@ public sealed class UpdateCultureTests : UserServiceTestBase
             .UpdateAsync(user);
         UserCultureCache
             .Received(1)
-            .InvalidateForUser(UserId);
+            .SetCultureForUser(UserId, Arg.Any<string>());
     }
     
     [Fact]
@@ -108,5 +108,8 @@ public sealed class UpdateCultureTests : UserServiceTestBase
 
         result.IsSuccess.Should().BeTrue();
         user.PreferredCulture.Should().Be(SupportedCultures.FrenchSwitzerland);
+        UserCultureCache
+            .Received(1)
+            .SetCultureForUser(UserId, SupportedCultures.FrenchSwitzerland);
     }
 }
