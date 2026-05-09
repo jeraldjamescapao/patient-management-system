@@ -229,6 +229,7 @@ internal sealed class AuthService : IAuthService
         existingToken.Revoke();
         existingToken.MarkReplacedBy(newRefreshToken.Id);
         
+        await _refreshTokenRepository.UpdateAsync(existingToken, ct);
         await _refreshTokenRepository.AddAsync(newRefreshToken, ct);
         await _refreshTokenRepository.SaveChangesAsync(ct);
         
@@ -259,6 +260,8 @@ internal sealed class AuthService : IAuthService
         var userId = existingToken.UserId;
         
         existingToken.Revoke();
+        
+        await _refreshTokenRepository.UpdateAsync(existingToken, ct);
         await _refreshTokenRepository.SaveChangesAsync(ct);
         
         AuthLogMessages.LogoutSucceeded(_logger, userId, null);

@@ -22,6 +22,12 @@ internal sealed class RefreshTokenRepository : IRefreshTokenRepository
     {
         await _context.RefreshTokens.AddAsync(token, ct);
     }
+    
+    public Task UpdateAsync(RefreshToken token, CancellationToken ct = default)
+    {
+        _context.RefreshTokens.Update(token);
+        return Task.CompletedTask;
+    }
 
     public async Task RevokeAllForUserAsync(Guid userId, CancellationToken ct = default)
     {
