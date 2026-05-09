@@ -1,9 +1,11 @@
 namespace MedCore.Modules.Identity.Infrastructure.Persistence;
 
+using MedCore.Common.Authorization;
+using MedCore.Modules.Identity.Domain.Roles;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using MedCore.Modules.Identity.Domain.Roles;
+
 
 internal static class IdentityRoleSeeder
 {
@@ -17,9 +19,9 @@ internal static class IdentityRoleSeeder
 
         var roles = new Dictionary<string, string>
         {
-            [IdentityRoles.Admin] = "System Administrator",
-            [IdentityRoles.Doctor] = "Doctor User",
-            [IdentityRoles.Patient] = "Patient User"
+            [AppRoles.Admin] = "System Administrator",
+            [AppRoles.Doctor] = "Doctor User",
+            [AppRoles.Patient] = "Patient User"
         };
         
         logger.LogInformation("Seeding identity roles: {Roles}.", string.Join(", ", roles.Keys));

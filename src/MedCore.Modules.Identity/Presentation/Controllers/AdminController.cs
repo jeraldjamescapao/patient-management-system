@@ -1,15 +1,15 @@
 namespace MedCore.Modules.Identity.Presentation.Controllers;
 
 using Asp.Versioning;
+using MedCore.Common.Authorization;
 using MedCore.Common.Controllers;
 using MedCore.Common.Localization;
-using MedCore.Modules.Identity.Domain.Roles;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiVersion("1")]
 [Route("api/v{version:apiVersion}/admin")]
-[Authorize(Roles = IdentityRoles.Admin)]
+[Authorize(Roles = AppRoles.Admin)]
 public sealed class AdminController : BaseApiController
 {
     private readonly ILocalizerCache _localizerCache;

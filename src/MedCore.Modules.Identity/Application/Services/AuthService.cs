@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using MedCore.Common.Authorization;
 using MedCore.Common.Caching;
 using MedCore.Common.Exceptions;
 using MedCore.Common.Results;
@@ -14,7 +15,6 @@ using MedCore.Modules.Identity.Application.Abstractions.Persistence;
 using MedCore.Modules.Identity.Application.Contracts.Authentication;
 using MedCore.Modules.Identity.Application.Logging;
 using MedCore.Modules.Identity.Configuration;
-using MedCore.Modules.Identity.Domain.Roles;
 using MedCore.Modules.Identity.Domain.Tokens;
 using MedCore.Modules.Identity.Domain.Users;
 using System.Security.Cryptography;
@@ -85,7 +85,7 @@ internal sealed class AuthService : IAuthService
             
             // Self-registration always assigns the Patient role.
             // Staff accounts are provisioned by administrators through a separate flow.
-            var roleResult = await _userManager.AddToRoleAsync(user, IdentityRoles.Patient);
+            var roleResult = await _userManager.AddToRoleAsync(user, AppRoles.Patient);
             if (!roleResult.Succeeded)
             {
                 await transaction.RollbackAsync(ct);
