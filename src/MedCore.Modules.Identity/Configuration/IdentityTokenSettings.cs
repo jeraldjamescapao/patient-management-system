@@ -2,7 +2,7 @@ namespace MedCore.Modules.Identity.Configuration;
 
 using System.ComponentModel.DataAnnotations;
 
-public sealed class IdentityTokenSettings
+internal sealed class IdentityTokenSettings
 {
     public const string SectionName = "IdentityTokens";
     

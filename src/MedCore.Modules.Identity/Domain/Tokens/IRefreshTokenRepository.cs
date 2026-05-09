@@ -1,6 +1,6 @@
 namespace MedCore.Modules.Identity.Domain.Tokens;
 
-public interface IRefreshTokenRepository
+internal interface IRefreshTokenRepository
 {
     Task<RefreshToken?> GetByTokenAsync(string token, CancellationToken ct = default);
     

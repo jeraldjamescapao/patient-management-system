@@ -2,7 +2,7 @@ namespace MedCore.Modules.Identity.Application.Logging;
 
 using Microsoft.Extensions.Logging;
 
-public static class AuthLogMessages
+internal static class AuthLogMessages
 {
     #region Register
     

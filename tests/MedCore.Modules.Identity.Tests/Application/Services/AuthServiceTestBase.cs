@@ -20,10 +20,10 @@ using NSubstitute;
 public abstract class AuthServiceTestBase
 {
     protected readonly UserManager<ApplicationUser> UserManager;
-    protected readonly IJwtTokenService JwtTokenService;
-    protected readonly IRefreshTokenRepository RefreshTokenRepository;
-    protected readonly IIdentityEmailService IdentityEmailService;
-    protected readonly IIdentityUnitOfWork UnitOfWork;
+    internal readonly IJwtTokenService JwtTokenService;
+    internal readonly IRefreshTokenRepository RefreshTokenRepository;
+    internal readonly IIdentityEmailService IdentityEmailService;
+    internal readonly IIdentityUnitOfWork UnitOfWork;
     protected readonly IDbContextTransaction Transaction;
     protected readonly IAuthService Sut;
     protected readonly ICurrentCultureService CurrentCultureService;

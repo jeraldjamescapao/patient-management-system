@@ -2,7 +2,7 @@ namespace MedCore.Modules.Identity.Domain.Tokens;
 
 using MedCore.Common.Exceptions;
 
-public sealed class RefreshToken
+internal sealed class RefreshToken
 {
     public Guid Id { get; private set; }
     public Guid UserId { get; private set; }

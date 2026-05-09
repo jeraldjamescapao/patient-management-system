@@ -2,7 +2,7 @@ namespace MedCore.Modules.Identity.Domain.Roles;
 
 using Microsoft.AspNetCore.Identity;
 
-public sealed class ApplicationRole : IdentityRole<Guid>
+internal sealed class ApplicationRole : IdentityRole<Guid>
 {
     public string Description { get; private set; } = null!;
 

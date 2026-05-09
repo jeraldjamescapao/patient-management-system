@@ -11,7 +11,6 @@
       <PackageReference Include="Asp.Versioning.Mvc" Version="8.1.1" />
       <PackageReference Include="EFCore.NamingConventions" Version="10.0.1" />
       <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.5" />
-      <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="10.0.3" />
       <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.3" />
       <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.3" />
       <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.0" />
@@ -23,5 +22,6 @@
 
     <ItemGroup>
         <InternalsVisibleTo Include="MedCore.Modules.Identity.Tests" />
+        <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
     </ItemGroup>
 </Project>

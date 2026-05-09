@@ -2,7 +2,7 @@ namespace MedCore.Modules.Identity.Configuration;
 
 using System.ComponentModel.DataAnnotations;
 
-public sealed class RefreshTokenCleanupSettings
+internal sealed class RefreshTokenCleanupSettings
 {
     public const string SectionName = "RefreshTokenCleanup";
 

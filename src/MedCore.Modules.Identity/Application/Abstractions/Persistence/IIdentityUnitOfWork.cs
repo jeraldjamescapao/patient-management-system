@@ -2,7 +2,7 @@ namespace MedCore.Modules.Identity.Application.Abstractions.Persistence;
 
 using Microsoft.EntityFrameworkCore.Storage;
 
-public interface IIdentityUnitOfWork
+internal interface IIdentityUnitOfWork
 {
     Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken ct = default);
 }

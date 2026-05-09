@@ -1,6 +1,6 @@
 namespace MedCore.Api.Logging;
 
-public static class ApiLogMessages
+internal static class ApiLogMessages
 {
     public static readonly Action<ILogger, string, string, Exception?> UnhandledException =
         LoggerMessage.Define<string, string>(

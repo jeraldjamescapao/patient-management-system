@@ -2,7 +2,7 @@ namespace MedCore.Modules.Users.Application.Logging;
 
 using Microsoft.Extensions.Logging;
 
-public static class UserLogMessages
+internal static class UserLogMessages
 {
     #region GetCurrentUser
     
@@ -14,7 +14,7 @@ public static class UserLogMessages
 
     public static readonly Action<ILogger, Guid, Exception?> GetCurrentUserSucceeded =
         LoggerMessage.Define<Guid>(
-            LogLevel.Information,
+            LogLevel.Debug,
             new EventId(3002, "GetCurrentUserSucceeded"),
             "Current user profile retrieved for user {UserId}.");
     

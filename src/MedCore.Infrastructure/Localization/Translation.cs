@@ -1,6 +1,6 @@
 namespace MedCore.Infrastructure.Localization;
 
-public sealed class Translation
+internal sealed class Translation
 {
     public long Id { get; private set; }
     public string Culture { get; private set; } = null!;

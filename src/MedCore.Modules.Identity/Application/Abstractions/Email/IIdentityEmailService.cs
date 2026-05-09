@@ -2,7 +2,7 @@ namespace MedCore.Modules.Identity.Application.Abstractions.Email;
 
 using MedCore.Modules.Identity.Domain.Users;
 
-public interface IIdentityEmailService
+internal interface IIdentityEmailService
 {
     Task SendConfirmationEmailAsync(
         ApplicationUser user, 

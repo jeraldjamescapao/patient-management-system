@@ -2,7 +2,7 @@ namespace MedCore.Infrastructure.Email;
 
 using System.ComponentModel.DataAnnotations;
 
-public sealed class EmailSettings
+internal sealed class EmailSettings
 {
     public const string SectionName = "Email";
     
