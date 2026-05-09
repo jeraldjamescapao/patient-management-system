@@ -1,10 +1,7 @@
 namespace MedCore.Api.Middleware;
 
-using MedCore.Common.Caching;
 using MedCore.Common.Localization;
 using MedCore.Common.Services;
-using MedCore.Modules.Identity.Domain.Users;
-using Microsoft.AspNetCore.Identity;
 using System.IdentityModel.Tokens.Jwt;
 
 internal sealed class CultureMiddleware
@@ -19,20 +16,18 @@ internal sealed class CultureMiddleware
     public async Task InvokeAsync(
         HttpContext context,
         ICurrentCultureService currentCultureService,
-        UserManager<ApplicationUser> userManager,
-        IUserCultureCache userCultureCache)
+        ICultureResolver cultureResolver)
     {
-        var culture = await ResolveAsync(context, userManager, userCultureCache);
+        var culture = await ResolveAsync(context, cultureResolver);
         currentCultureService.SetCulture(culture);
         await _next(context);
     }
     
     private static async Task<string> ResolveAsync(
         HttpContext context,
-        UserManager<ApplicationUser> userManager,
-        IUserCultureCache userCultureCache)
+        ICultureResolver cultureResolver)
     {
-        if (context.User.Identity?.IsAuthenticated != true)
+        if (context.User.Identity?.IsAuthenticated is not true)
             return ResolveFromHeader(context.Request.Headers.AcceptLanguage.ToString());
         
         var userIdClaim = context.User
@@ -41,31 +36,7 @@ internal sealed class CultureMiddleware
         if (!Guid.TryParse(userIdClaim, out var userId))
             return ResolveFromHeader(context.Request.Headers.AcceptLanguage.ToString());
         
-        var cacheKey = CacheKeys.UserCulture(userId);
-
-        if (userCultureCache.TryGetCultureForUser(userId, out var cached) && cached is not null)
-            return cached;
-
-        // NOTE: Cache miss triggers a DB query via UserManager.
-        // This only occurs when the sliding window expires (30 minutes of inactivity).
-        // Login pre-populates the cache, and culture updates keep it warm via SetCultureForUser.
-        // This path is rare in normal usage.
-        var user = await userManager.FindByIdAsync(userId.ToString());
-        var resolved = ResolveFromPreference(user?.PreferredCulture);
-        
-        userCultureCache.SetCultureForUser(userId, resolved);
-
-        return resolved;
-    }
-    
-    private static string ResolveFromPreference(string? preferredCulture)
-    {
-        if (preferredCulture is null)
-            return SupportedCultures.Default;
-
-        return SupportedCultures.All.Contains(preferredCulture)
-            ? preferredCulture
-            : SupportedCultures.Default;
+        return await cultureResolver.ResolveForUserAsync(userId, context.RequestAborted);
     }
     
     private static string ResolveFromHeader(string acceptLanguage)

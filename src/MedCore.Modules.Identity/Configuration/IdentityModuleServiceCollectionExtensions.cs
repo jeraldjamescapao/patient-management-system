@@ -85,6 +85,7 @@ public static class IdentityModuleServiceCollectionExtensions
 
         services.AddHttpContextAccessor();
         services.AddScoped<ICurrentUserService, CurrentUserService>();
+        services.AddScoped<ICultureResolver, IdentityCultureResolver>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IIdentityEmailService, IdentityEmailService>();
 
