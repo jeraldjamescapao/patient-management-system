@@ -1,4 +1,4 @@
-namespace MedCore.Modules.Identity;
+namespace MedCore.Modules.Identity.Configuration;
 
 using Microsoft.AspNetCore.Builder;
 using MedCore.Modules.Identity.Infrastructure.Persistence;

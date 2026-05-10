@@ -1,4 +1,4 @@
-namespace MedCore.Infrastructure;
+namespace MedCore.Infrastructure.Configuration;
 
 using MedCore.Common.Localization;
 using MedCore.Infrastructure.Localization;

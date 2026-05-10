@@ -1,8 +1,9 @@
 using MedCore.Api.Middleware;
 using MedCore.Common.Configuration;
 using MedCore.Common.Modules;
-using MedCore.Infrastructure;
+using MedCore.Infrastructure.Configuration;
 using MedCore.Modules.Identity;
+using MedCore.Modules.Identity.Configuration;
 using MedCore.Modules.Users;
 using Scalar.AspNetCore;
 using Serilog;
