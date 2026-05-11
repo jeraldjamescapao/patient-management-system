@@ -1,4 +1,4 @@
-namespace MedCore.Common.Localization;
+namespace MedCore.Modules.Localization.Application.Abstractions;
 
 public interface ITranslationRepository
 {

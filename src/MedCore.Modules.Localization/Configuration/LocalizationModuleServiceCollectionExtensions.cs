@@ -1,6 +1,7 @@
 namespace MedCore.Modules.Localization.Configuration;
 
 using MedCore.Common.Localization;
+using MedCore.Modules.Localization.Application.Abstractions;
 using MedCore.Modules.Localization.Infrastructure.Persistence;
 using MedCore.Modules.Localization.Infrastructure.Persistence.Repositories;
 using MedCore.Modules.Localization.Infrastructure.Services;

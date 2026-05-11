@@ -12,12 +12,8 @@ using Microsoft.Extensions.DependencyInjection;
 public static class InfrastructureServiceCollectionExtensions
 {
     public static IServiceCollection AddInfrastructure(
-        this IServiceCollection services,
-        IConfiguration configuration)
+        this IServiceCollection services)
     {
-        var connectionString = configuration.GetConnectionString("SqlServerConnection") 
-            ?? throw new InvalidOperationException("Database connection string is not configured.");
-
         services.AddMemoryCache();
 
         services.AddScoped<ICurrentCultureService, CurrentCultureService>();

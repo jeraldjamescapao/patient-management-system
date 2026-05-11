@@ -35,7 +35,7 @@ try
         typeof(UsersModule).Assembly,
         typeof(LocalizationModule).Assembly);
 
-    builder.Services.AddInfrastructure(builder.Configuration);
+    builder.Services.AddInfrastructure();
 
     builder.Services.AddOptions<FrontendSettings>()
         .BindConfiguration(FrontendSettings.SectionName)

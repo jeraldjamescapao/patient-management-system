@@ -2,6 +2,7 @@ namespace MedCore.Modules.Localization.Infrastructure.Services;
 
 using MedCore.Common.Caching;
 using MedCore.Common.Localization;
+using MedCore.Modules.Localization.Application.Abstractions;
 using MedCore.Modules.Localization.Application.Logging;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
