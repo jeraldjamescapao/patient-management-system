@@ -1,4 +1,4 @@
-namespace MedCore.Infrastructure.Localization;
+namespace MedCore.Modules.Localization.Application.Logging;
 
 using Microsoft.Extensions.Logging;
 

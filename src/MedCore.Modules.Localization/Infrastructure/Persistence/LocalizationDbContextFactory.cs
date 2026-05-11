@@ -1,4 +1,4 @@
-namespace MedCore.Infrastructure.Localization;
+namespace MedCore.Modules.Localization.Infrastructure.Persistence;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
@@ -23,7 +23,7 @@ internal sealed class LocalizationDbContextFactory : IDesignTimeDbContextFactory
 
         var optionsBuilder = new DbContextOptionsBuilder<LocalizationDbContext>();
         optionsBuilder.UseSqlServer(connectionString,
-            o => o.MigrationsAssembly("MedCore.Infrastructure"));
+            o => o.MigrationsAssembly("MedCore.Modules.Localization"));
 
         return new LocalizationDbContext(optionsBuilder.Options);
     }

@@ -176,14 +176,14 @@ Authorization: Bearer {{AccessToken}}
 ###
 
 # ─────────────────────────────────────────
-# Admin — Refresh Translation Cache
+# Localization — Refresh Translation Cache
 # Clears and reloads the in-memory translation cache from the database.
 # Use this after updating a translation row directly in the DB.
 # Requires: valid Bearer token with Admin role.
 # Returns: 204 No Content.
 # ─────────────────────────────────────────
 
-POST {{MedCore_HostAddress}}/api/v1/admin/translations/refresh
+POST {{MedCore_HostAddress}}/api/v1/admin/translations/cache/refresh
 Content-Type: {{ContentType}}
 Authorization: Bearer {{AccessToken}}
 

@@ -1,7 +1,7 @@
-namespace MedCore.Infrastructure.Configuration;
+namespace MedCore.Modules.Localization.Configuration;
 
 using MedCore.Common.Localization;
-using MedCore.Infrastructure.Localization;
+using MedCore.Modules.Localization.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 

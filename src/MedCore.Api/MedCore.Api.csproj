@@ -24,6 +24,7 @@
         <ProjectReference Include="..\MedCore.Infrastructure\MedCore.Infrastructure.csproj" />
         <ProjectReference Include="..\MedCore.Modules.Identity\MedCore.Modules.Identity.csproj" />
         <ProjectReference Include="..\MedCore.Modules.Users\MedCore.Modules.Users.csproj" />
+        <ProjectReference Include="..\MedCore.Modules.Localization\MedCore.Modules.Localization.csproj" />
     </ItemGroup>
     
     <ItemGroup>

@@ -1,8 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace MedCore.Infrastructure.Migrations
+namespace MedCore.Modules.Localization.Infrastructure.Persistence.Migrations
 {
     /// <inheritdoc />
     public partial class InitialLocalizationSchema : Migration
@@ -22,7 +23,13 @@ namespace MedCore.Infrastructure.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Culture = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
                     Key = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    Value = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Value = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
+                    CreatedAtUtc = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    ModifiedAtUtc = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    ModifiedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -41,6 +48,12 @@ namespace MedCore.Infrastructure.Migrations
                 table: "Translations",
                 columns: new[] { "Culture", "Key" },
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Translations_IsActive",
+                schema: "Localization",
+                table: "Translations",
+                column: "IsActive");
         }
 
         /// <inheritdoc />

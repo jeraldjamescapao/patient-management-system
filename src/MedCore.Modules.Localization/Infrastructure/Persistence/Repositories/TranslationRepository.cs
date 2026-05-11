@@ -1,6 +1,8 @@
-namespace MedCore.Infrastructure.Localization;
+namespace MedCore.Modules.Localization.Infrastructure.Persistence.Repositories;
 
+using MedCore.Common.Authorization;
 using MedCore.Common.Localization;
+using MedCore.Modules.Localization.Domain;
 using Microsoft.EntityFrameworkCore;
 
 internal sealed class TranslationRepository : ITranslationRepository
@@ -17,6 +19,7 @@ internal sealed class TranslationRepository : ITranslationRepository
     {
         var all = await _context.Translations
             .AsNoTracking()
+            .Where(t => t.IsActive)
             .ToListAsync(ct);
 
         return all
@@ -44,7 +47,8 @@ internal sealed class TranslationRepository : ITranslationRepository
         string value,
         CancellationToken ct = default)
     {
-        await _context.Translations.AddAsync(new Translation(culture, key, value), ct);
+        await _context.Translations.AddAsync(
+            new Translation(culture, key, value, SystemActors.System), ct);
     }
 
     public async Task SaveChangesAsync(CancellationToken ct = default)

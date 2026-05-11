@@ -1,5 +1,6 @@
-namespace MedCore.Infrastructure.Localization;
+namespace MedCore.Modules.Localization.Infrastructure.Persistence;
 
+using MedCore.Modules.Localization.Domain;
 using Microsoft.EntityFrameworkCore;
 
 internal sealed class LocalizationDbContext : DbContext
@@ -36,12 +37,36 @@ internal sealed class LocalizationDbContext : DbContext
                 .IsRequired()
                 .HasColumnType("nvarchar(max)");
 
+            entity.Property(x => x.Description)
+                .HasMaxLength(500);
+
+            entity.Property(x => x.IsActive)
+                .IsRequired()
+                .HasDefaultValue(true);
+
+            entity.Property(x => x.CreatedAtUtc)
+                .HasColumnType("datetimeoffset")
+                .IsRequired();
+
+            entity.Property(x => x.CreatedBy)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            entity.Property(x => x.ModifiedAtUtc)
+                .HasColumnType("datetimeoffset");
+
+            entity.Property(x => x.ModifiedBy)
+                .HasMaxLength(100);
+
             entity.HasIndex(x => x.Culture)
                 .HasDatabaseName("IX_Translations_Culture");
 
             entity.HasIndex(x => new { x.Culture, x.Key })
                 .IsUnique()
                 .HasDatabaseName("IX_Translations_Culture_Key");
+
+            entity.HasIndex(x => x.IsActive)
+                .HasDatabaseName("IX_Translations_IsActive");
         });
     }
 }

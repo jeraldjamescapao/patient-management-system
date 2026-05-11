@@ -1,6 +1,7 @@
-namespace MedCore.Infrastructure.Localization;
+namespace MedCore.Modules.Localization.Infrastructure.Persistence;
 
 using MedCore.Common.Localization;
+using MedCore.Modules.Localization.Application.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 

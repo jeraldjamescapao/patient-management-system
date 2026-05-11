@@ -4,6 +4,8 @@ using MedCore.Common.Modules;
 using MedCore.Infrastructure.Configuration;
 using MedCore.Modules.Identity;
 using MedCore.Modules.Identity.Configuration;
+using MedCore.Modules.Localization;
+using MedCore.Modules.Localization.Configuration;
 using MedCore.Modules.Users;
 using Scalar.AspNetCore;
 using Serilog;
@@ -30,7 +32,8 @@ try
     builder.Services.RegisterModules(
         builder.Configuration,
         typeof(IdentityModule).Assembly,
-        typeof(UsersModule).Assembly);
+        typeof(UsersModule).Assembly,
+        typeof(LocalizationModule).Assembly);
 
     builder.Services.AddInfrastructure(builder.Configuration);
 
