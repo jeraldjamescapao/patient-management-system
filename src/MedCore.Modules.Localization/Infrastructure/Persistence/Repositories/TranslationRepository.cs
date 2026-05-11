@@ -19,6 +19,7 @@ internal sealed class TranslationRepository : ITranslationRepository
         var all = await _context.Translations
             .AsNoTracking()
             .Where(t => t.IsActive)
+            .Select(t => new { t.Culture, t.Key, t.Value })
             .ToListAsync(ct);
 
         return all
