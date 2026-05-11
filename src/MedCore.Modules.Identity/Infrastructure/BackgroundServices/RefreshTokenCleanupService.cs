@@ -28,10 +28,11 @@ internal sealed class RefreshTokenCleanupService : BackgroundService
     {
         AuthLogMessages.RefreshTokenCleanupStarted(_logger, _settings.IntervalInHours, null);
         
-        while (!ct.IsCancellationRequested)
+        using var timer = new PeriodicTimer(TimeSpan.FromHours(_settings.IntervalInHours));
+        
+        while (await timer.WaitForNextTickAsync(ct))
         {
             await CleanupExpiredTokensAsync(ct);
-            await Task.Delay(TimeSpan.FromHours(_settings.IntervalInHours), ct);
         }
     }
 

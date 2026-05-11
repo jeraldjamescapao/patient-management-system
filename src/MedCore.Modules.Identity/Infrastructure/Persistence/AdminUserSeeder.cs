@@ -36,6 +36,7 @@ internal static class AdminUserSeeder
             email: email,
             firstName: firstName,
             lastName: lastName,
+            // BirthDate is required by the domain entity but has no meaning for a system-seeded admin account.
             birthDate: new DateOnly(1990, 1, 1),
             createdBy: SystemActors.System);
 
