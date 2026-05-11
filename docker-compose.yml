@@ -1,6 +1,6 @@
 services:
   sqlserver:
-    image: mcr.microsoft.com/azure-sql-edge
+    image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: medcore-sqlserver
     environment:
       SA_PASSWORD: "MedCore_Dev_2024!"
