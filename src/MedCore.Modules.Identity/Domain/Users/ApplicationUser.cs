@@ -120,14 +120,17 @@ public sealed class ApplicationUser : IdentityUser<Guid>, IAuditableEntity
     {
         if (string.IsNullOrWhiteSpace(culture))
             throw new DomainException("DOMAIN_USER_INVALID_CULTURE", "Culture is required.");
-        if (!SupportedCultures.All.Contains(culture))
+        
+        var trimmedCulture = culture.Trim();
+        
+        if (!SupportedCultures.All.Contains(trimmedCulture))
             throw new DomainException("DOMAIN_USER_INVALID_CULTURE", "Unsupported culture.");
         if (string.IsNullOrWhiteSpace(modifiedBy))
             throw new DomainException("DOMAIN_USER_INVALID_MODIFIED_BY", "ModifiedBy is required."); 
         
-        if (culture == PreferredCulture) return;
+        if (trimmedCulture == PreferredCulture) return;
 
-        PreferredCulture = culture;
+        PreferredCulture = trimmedCulture;
         ModifiedAtUtc = DateTimeOffset.UtcNow;
         ModifiedBy = modifiedBy;
     }
