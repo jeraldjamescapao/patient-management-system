@@ -92,6 +92,17 @@ with:
 image: mcr.microsoft.com/azure-sql-edge
 ```
 
+### Local configuration
+
+The repository includes `appsettings.Example.json` with a complete
+development configuration for reviewer convenience.
+
+Copy the example file:
+
+```bash
+cp src/MedCore.Api/appsettings.Example.json src/MedCore.Api/appsettings.Development.json
+```
+
 ### Run the services
 
 ```bash
