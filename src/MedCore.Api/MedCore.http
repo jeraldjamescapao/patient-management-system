@@ -2,7 +2,7 @@
 @ContentType = application/json
 
 # Copy an access token from a login or register response and paste it here.
-@AccessToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmMTA2NTU1Zi01MjQ3LTRjMzEtYTcyNy0yOWRmZDYwZmFkMTAiLCJlbWFpbCI6ImFkbWluQG1lZGNvcmUuZGV2IiwianRpIjoiZDA1YzMzZGUtMzk3Mi00Yjk1LWJlNzUtOWNiN2VkYzgzYWZjIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQWRtaW4iLCJleHAiOjE3Nzg1MTAyODEsImlzcyI6Ik1lZENvcmUiLCJhdWQiOiJNZWRDb3JlIn0.ygpB2sezUheM650LgYu_S1lNe_Gg-zmkXJlkVKibObw
+@AccessToken = 
 
 ###
 
@@ -289,3 +289,300 @@ Authorization: Bearer {{AccessToken}}
 
 ###
 
+# ─────────────────────────────────────────
+# CodeItems — Get All Categories (Admin)
+# Returns all categories excluding deleted ones.
+# Requires: valid Bearer token with Admin role.
+# Returns: 200 with list of categories.
+# ─────────────────────────────────────────
+
+GET {{MedCore_HostAddress}}/api/v1/code-items/categories
+Authorization: Bearer {{AccessToken}}
+
+###
+
+# ─────────────────────────────────────────
+# CodeItems — Get Category by ID (Admin)
+# Requires: valid Bearer token with Admin role.
+# Returns: 200 with category, or 404 if not found.
+# ─────────────────────────────────────────
+
+GET {{MedCore_HostAddress}}/api/v1/code-items/categories/1
+Authorization: Bearer {{AccessToken}}
+
+###
+
+# ─────────────────────────────────────────
+# CodeItems — Create Category (Admin)
+# Requires: valid Bearer token with Admin role.
+# Returns: 201 with created category.
+# ─────────────────────────────────────────
+
+POST {{MedCore_HostAddress}}/api/v1/code-items/categories
+Content-Type: {{ContentType}}
+Authorization: Bearer {{AccessToken}}
+
+{
+  "code": "custom.category",
+  "description": "A custom admin-created category",
+  "sortOrder": 300
+}
+
+###
+
+# ─────────────────────────────────────────
+# CodeItems — Update Category (Admin)
+# Code is not updatable.
+# Requires: valid Bearer token with Admin role.
+# Returns: 200 with updated category.
+# ─────────────────────────────────────────
+
+PUT {{MedCore_HostAddress}}/api/v1/code-items/categories/1
+Content-Type: {{ContentType}}
+Authorization: Bearer {{AccessToken}}
+
+{
+  "description": "Updated description",
+  "sortOrder": 10
+}
+
+###
+
+# ─────────────────────────────────────────
+# CodeItems — Activate Category (Admin)
+# Requires: valid Bearer token with Admin role.
+# Returns: 204 No Content.
+# ─────────────────────────────────────────
+
+PUT {{MedCore_HostAddress}}/api/v1/code-items/categories/1/activate
+Authorization: Bearer {{AccessToken}}
+
+###
+
+# ─────────────────────────────────────────
+# CodeItems — Deactivate Category (Admin)
+# Requires: valid Bearer token with Admin role.
+# Returns: 204 No Content.
+# ─────────────────────────────────────────
+
+PUT {{MedCore_HostAddress}}/api/v1/code-items/categories/1/deactivate
+Authorization: Bearer {{AccessToken}}
+
+###
+
+# ─────────────────────────────────────────
+# CodeItems — Delete Category (Admin)
+# Soft delete. Blocked if active items exist.
+# Requires: valid Bearer token with Admin role.
+# Returns: 204 No Content.
+# ─────────────────────────────────────────
+
+DELETE {{MedCore_HostAddress}}/api/v1/code-items/categories/1
+Authorization: Bearer {{AccessToken}}
+
+###
+
+# ─────────────────────────────────────────
+# CodeItems — Reorder Categories (Admin)
+# Accepts a list of { id, sortOrder } pairs.
+# Requires: valid Bearer token with Admin role.
+# Returns: 204 No Content.
+# ─────────────────────────────────────────
+
+PUT {{MedCore_HostAddress}}/api/v1/code-items/categories/reorder
+Content-Type: {{ContentType}}
+Authorization: Bearer {{AccessToken}}
+
+{
+  "entries": [
+    { "id": 1, "sortOrder": 10 },
+    { "id": 2, "sortOrder": 20 }
+  ]
+}
+
+###
+
+# ─────────────────────────────────────────
+# CodeItems — Get Items by Category (Admin)
+# Requires: valid Bearer token with Admin role.
+# Returns: 200 with list of items.
+# ─────────────────────────────────────────
+
+GET {{MedCore_HostAddress}}/api/v1/code-items/categories/1/items
+Authorization: Bearer {{AccessToken}}
+
+###
+
+# ─────────────────────────────────────────
+# CodeItems — Get Item by ID (Admin)
+# Requires: valid Bearer token with Admin role.
+# Returns: 200 with item, or 404 if not found.
+# ─────────────────────────────────────────
+
+GET {{MedCore_HostAddress}}/api/v1/code-items/categories/1/items/1
+Authorization: Bearer {{AccessToken}}
+
+###
+
+# ─────────────────────────────────────────
+# CodeItems — Create Item (Admin)
+# Requires: valid Bearer token with Admin role.
+# Returns: 201 with created item.
+# ─────────────────────────────────────────
+
+POST {{MedCore_HostAddress}}/api/v1/code-items/categories/1/items
+Content-Type: {{ContentType}}
+Authorization: Bearer {{AccessToken}}
+
+{
+  "code": "CustomItem",
+  "description": "A custom admin-created item",
+  "sortOrder": 999
+}
+
+###
+
+# ─────────────────────────────────────────
+# CodeItems — Update Item (Admin)
+# Code is not updatable.
+# Requires: valid Bearer token with Admin role.
+# Returns: 200 with updated item.
+# ─────────────────────────────────────────
+
+PUT {{MedCore_HostAddress}}/api/v1/code-items/categories/1/items/1
+Content-Type: {{ContentType}}
+Authorization: Bearer {{AccessToken}}
+
+{
+  "description": "Updated item description",
+  "sortOrder": 10
+}
+
+###
+
+# ─────────────────────────────────────────
+# CodeItems — Activate Item (Admin)
+# Requires: valid Bearer token with Admin role.
+# Returns: 204 No Content.
+# ─────────────────────────────────────────
+
+PUT {{MedCore_HostAddress}}/api/v1/code-items/categories/1/items/1/activate
+Authorization: Bearer {{AccessToken}}
+
+###
+
+# ─────────────────────────────────────────
+# CodeItems — Deactivate Item (Admin)
+# Requires: valid Bearer token with Admin role.
+# Returns: 204 No Content.
+# ─────────────────────────────────────────
+
+PUT {{MedCore_HostAddress}}/api/v1/code-items/categories/1/items/1/deactivate
+Authorization: Bearer {{AccessToken}}
+
+###
+
+# ─────────────────────────────────────────
+# CodeItems — Delete Item (Admin)
+# Soft delete. Cascades to item translations.
+# Requires: valid Bearer token with Admin role.
+# Returns: 204 No Content.
+# ─────────────────────────────────────────
+
+DELETE {{MedCore_HostAddress}}/api/v1/code-items/categories/1/items/1
+Authorization: Bearer {{AccessToken}}
+
+###
+
+# ─────────────────────────────────────────
+# CodeItems — Reorder Items (Admin)
+# Accepts a list of { id, sortOrder } pairs.
+# Requires: valid Bearer token with Admin role.
+# Returns: 204 No Content.
+# ─────────────────────────────────────────
+
+PUT {{MedCore_HostAddress}}/api/v1/code-items/categories/1/items/reorder
+Content-Type: {{ContentType}}
+Authorization: Bearer {{AccessToken}}
+
+{
+  "entries": [
+    { "id": 1, "sortOrder": 10 },
+    { "id": 2, "sortOrder": 20 }
+  ]
+}
+
+###
+
+# ─────────────────────────────────────────
+# CodeItems — Get Category Translations (Admin)
+# Requires: valid Bearer token with Admin role.
+# Returns: 200 with list of translations.
+# ─────────────────────────────────────────
+
+GET {{MedCore_HostAddress}}/api/v1/code-items/categories/1/translations
+Authorization: Bearer {{AccessToken}}
+
+###
+
+# ─────────────────────────────────────────
+# CodeItems — Upsert Category Translation (Admin)
+# Creates or updates the label for a category in a specific culture.
+# Supported culture values: en, fr, de, fr-CH, de-CH
+# Requires: valid Bearer token with Admin role.
+# Returns: 200 with translation.
+# ─────────────────────────────────────────
+
+PUT {{MedCore_HostAddress}}/api/v1/code-items/categories/1/translations/en
+Content-Type: {{ContentType}}
+Authorization: Bearer {{AccessToken}}
+
+{
+  "label": "Appointment Type",
+  "description": null
+}
+
+###
+
+# ─────────────────────────────────────────
+# CodeItems — Get Item Translations (Admin)
+# Requires: valid Bearer token with Admin role.
+# Returns: 200 with list of translations.
+# ─────────────────────────────────────────
+
+GET {{MedCore_HostAddress}}/api/v1/code-items/categories/1/items/1/translations
+Authorization: Bearer {{AccessToken}}
+
+###
+
+# ─────────────────────────────────────────
+# CodeItems — Upsert Item Translation (Admin)
+# Creates or updates the label for an item in a specific culture.
+# Supported culture values: en, fr, de, fr-CH, de-CH
+# Requires: valid Bearer token with Admin role.
+# Returns: 200 with translation.
+# ─────────────────────────────────────────
+
+PUT {{MedCore_HostAddress}}/api/v1/code-items/categories/1/items/1/translations/fr
+Content-Type: {{ContentType}}
+Authorization: Bearer {{AccessToken}}
+
+{
+  "label": "Consultation",
+  "description": null
+}
+
+###
+
+# ─────────────────────────────────────────
+# CodeItems — Get Active Items (Consumer)
+# Returns active items for the given category code in the
+# current user's culture. Falls back to English if no label exists.
+# Requires: valid Bearer token (any role).
+# Returns: 200 with category code and list of { code, label }.
+# ─────────────────────────────────────────
+
+GET {{MedCore_HostAddress}}/api/v1/code-items/appointment.type
+Authorization: Bearer {{AccessToken}}
+
+###
