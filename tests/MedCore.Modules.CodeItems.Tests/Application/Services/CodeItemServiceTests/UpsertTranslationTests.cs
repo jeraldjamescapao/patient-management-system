@@ -177,4 +177,62 @@ public sealed class UpsertTranslationTests : CodeItemServiceTestBase
         existing.IsActive.Should().BeTrue();
         existing.Label.Should().Be("New Label");
     }
+    
+    [Fact]
+    public async Task UpsertItemTranslationAsync_TranslationNotExists_CreatesNew()
+    {
+        var item = CreateItem();
+
+        Repository
+            .GetItemByIdAsync(1, Arg.Any<CancellationToken>())
+            .Returns(item);
+
+        Repository
+            .GetTranslationAsync(
+                CodeItemTranslation.EntityTypeItem,
+                1,
+                SupportedCultures.French,
+                Arg.Any<CancellationToken>())
+            .Returns((CodeItemTranslation?)null);
+
+        var result = await Sut.UpsertItemTranslationAsync(
+            1, SupportedCultures.French, new UpsertTranslationRequest("Consultation", null));
+
+        result.IsSuccess.Should().BeTrue();
+        result.Value!.Label.Should().Be("Consultation");
+        result.Value.Culture.Should().Be(SupportedCultures.French);
+        await Repository
+            .Received(1)
+            .AddTranslationAsync(Arg.Any<CodeItemTranslation>(), Arg.Any<CancellationToken>());
+    }
+    
+    [Fact]
+    public async Task UpsertItemTranslationAsync_TranslationExists_UpdatesLabel()
+    {
+        var item = CreateItem();
+        var existing = CreateTranslation(
+            CodeItemTranslation.EntityTypeItem, 1, SupportedCultures.English, "Old Label");
+
+        Repository
+            .GetItemByIdAsync(1, Arg.Any<CancellationToken>())
+            .Returns(item);
+
+        Repository
+            .GetTranslationAsync(
+                CodeItemTranslation.EntityTypeItem,
+                1,
+                SupportedCultures.English,
+                Arg.Any<CancellationToken>())
+            .Returns(existing);
+
+        var result = await Sut.UpsertItemTranslationAsync(
+            1, SupportedCultures.English, new UpsertTranslationRequest("New Label", null));
+
+        result.IsSuccess.Should().BeTrue();
+        result.Value!.Label.Should().Be("New Label");
+        existing.Label.Should().Be("New Label");
+        await Repository
+            .DidNotReceive()
+            .AddTranslationAsync(Arg.Any<CodeItemTranslation>(), Arg.Any<CancellationToken>());
+    }
 }

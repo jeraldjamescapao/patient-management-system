@@ -41,7 +41,7 @@ French, and German.
 
 ## Tests
 
-123 unit tests across four projects using xUnit, NSubstitute, and FluentAssertions.
+125 unit tests across four projects using xUnit, NSubstitute, and FluentAssertions.
 Each service is tested in isolation with substituted infrastructure dependencies.
 
 ## Architecture
