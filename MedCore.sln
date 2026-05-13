@@ -24,6 +24,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MedCore.Modules.Localizatio
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MedCore.Modules.CodeItems", "src\MedCore.Modules.CodeItems\MedCore.Modules.CodeItems.csproj", "{F11CCE9A-4158-45D3-9E6C-713A94780F76}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MedCore.Modules.CodeItems.Tests", "tests\MedCore.Modules.CodeItems.Tests\MedCore.Modules.CodeItems.Tests.csproj", "{3406331E-D727-4F2F-8851-644E43514341}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -70,6 +72,10 @@ Global
 		{F11CCE9A-4158-45D3-9E6C-713A94780F76}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F11CCE9A-4158-45D3-9E6C-713A94780F76}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F11CCE9A-4158-45D3-9E6C-713A94780F76}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3406331E-D727-4F2F-8851-644E43514341}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3406331E-D727-4F2F-8851-644E43514341}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3406331E-D727-4F2F-8851-644E43514341}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3406331E-D727-4F2F-8851-644E43514341}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{B4330DA2-7B5D-4266-B132-94923A526ACF} = {67685E54-8B68-4D94-BAE2-FF24135EA1C0}
@@ -82,5 +88,6 @@ Global
 		{E5F6A05B-C43A-4EDD-8EA3-E60B55ACFDC1} = {5048FCC2-7F77-4B91-B495-4E7E735D46D9}
 		{4A0F93AA-27CB-4837-8E6C-AA7BFEA01530} = {67685E54-8B68-4D94-BAE2-FF24135EA1C0}
 		{F11CCE9A-4158-45D3-9E6C-713A94780F76} = {5048FCC2-7F77-4B91-B495-4E7E735D46D9}
+		{3406331E-D727-4F2F-8851-644E43514341} = {67685E54-8B68-4D94-BAE2-FF24135EA1C0}
 	EndGlobalSection
 EndGlobal
