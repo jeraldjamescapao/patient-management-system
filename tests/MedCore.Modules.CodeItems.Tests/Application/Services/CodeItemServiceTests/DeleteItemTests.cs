@@ -48,21 +48,24 @@ public sealed class DeleteItemTests : CodeItemServiceTestBase
             .GetItemByIdAsync(1, Arg.Any<CancellationToken>())
             .Returns(item);
 
+        var translation1 = CreateTranslation(entityId: 1, culture: "en");
+        var translation2 = CreateTranslation(entityId: 2, culture: "fr");
+        var translation3 = CreateTranslation(entityId: 3, culture: "de");
+        
         Repository
             .GetTranslationsByEntityAsync(
                 CodeItemTranslation.EntityTypeItem,
                 Arg.Any<long>(),
                 Arg.Any<CancellationToken>())
-            .Returns([
-                CreateTranslation(entityId: 1, culture: "en"),
-                CreateTranslation(entityId: 2, culture: "fr"),
-                CreateTranslation(entityId: 3, culture: "de")
-            ]);
+            .Returns([ translation1, translation2, translation3]);
 
         var result = await Sut.DeleteItemAsync(1);
 
         result.IsSuccess.Should().BeTrue();
         item.IsDeleted.Should().BeTrue();
+        translation1.IsDeleted.Should().BeTrue();
+        translation2.IsDeleted.Should().BeTrue();
+        translation3.IsDeleted.Should().BeTrue();
         await Repository
             .Received(1)
             .GetTranslationsByEntityAsync(

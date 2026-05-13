@@ -1,5 +1,3 @@
-using System.Security.Cryptography.X509Certificates;
-
 namespace MedCore.Modules.CodeItems.Tests.Application.Services;
 
 using MedCore.Common.Authorization;
