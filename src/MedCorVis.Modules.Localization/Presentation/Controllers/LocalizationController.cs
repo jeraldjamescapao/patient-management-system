@@ -1,14 +1,10 @@
-using MedCorVis.Modules.Localization.Application.Abstractions;
-using MedCorVis.Modules.Localization.Application.Contracts.Requests;
-
 namespace MedCorVis.Modules.Localization.Presentation.Controllers;
 
 using Asp.Versioning;
 using MedCorVis.Common.Authorization;
 using MedCorVis.Common.Controllers;
-using Localization.Application.Abstractions;
-using Localization.Application.Contracts;
-using Localization.Application.Contracts.Requests;
+using MedCorVis.Modules.Localization.Application.Abstractions;
+using MedCorVis.Modules.Localization.Application.Contracts.Requests;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

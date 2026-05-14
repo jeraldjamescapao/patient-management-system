@@ -1,17 +1,11 @@
+namespace MedCorVis.Modules.Localization.Configuration;
+
+using MedCorVis.Common.Localization;
 using MedCorVis.Modules.Localization.Application.Abstractions;
 using MedCorVis.Modules.Localization.Application.Services;
 using MedCorVis.Modules.Localization.Infrastructure.Persistence;
 using MedCorVis.Modules.Localization.Infrastructure.Persistence.Repositories;
 using MedCorVis.Modules.Localization.Infrastructure.Services;
-
-namespace MedCorVis.Modules.Localization.Configuration;
-
-using MedCorVis.Common.Localization;
-using Localization.Application.Abstractions;
-using Localization.Application.Services;
-using Localization.Infrastructure.Persistence;
-using Localization.Infrastructure.Persistence.Repositories;
-using Localization.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

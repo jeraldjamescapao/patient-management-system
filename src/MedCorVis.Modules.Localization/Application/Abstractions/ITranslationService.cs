@@ -1,11 +1,8 @@
-using MedCorVis.Modules.Localization.Application.Contracts.Requests;
-using MedCorVis.Modules.Localization.Application.Contracts.Responses;
-
 namespace MedCorVis.Modules.Localization.Application.Abstractions;
 
 using MedCorVis.Common.Results;
-using Localization.Application.Contracts.Requests;
-using Localization.Application.Contracts.Responses;
+using MedCorVis.Modules.Localization.Application.Contracts.Requests;
+using MedCorVis.Modules.Localization.Application.Contracts.Responses;
 
 public interface ITranslationService
 {

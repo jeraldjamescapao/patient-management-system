@@ -1,10 +1,7 @@
-using MedCorVis.Modules.Localization.Application.Abstractions;
-using MedCorVis.Modules.Localization.Domain;
-
 namespace MedCorVis.Modules.Localization.Infrastructure.Persistence.Repositories;
 
-using Localization.Application.Abstractions;
-using Localization.Domain;
+using MedCorVis.Modules.Localization.Application.Abstractions;
+using MedCorVis.Modules.Localization.Domain;
 using Microsoft.EntityFrameworkCore;
 
 internal sealed class TranslationRepository : ITranslationRepository

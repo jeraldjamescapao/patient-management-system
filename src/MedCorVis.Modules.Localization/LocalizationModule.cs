@@ -1,11 +1,9 @@
-using MedCorVis.Modules.Localization.Infrastructure.Persistence.Seeds;
-
 namespace MedCorVis.Modules.Localization;
 
 using MedCorVis.Common.Localization;
 using MedCorVis.Common.Modules;
-using Localization.Configuration;
-using Localization.Infrastructure.Persistence.Seeds;
+using MedCorVis.Modules.Localization.Configuration;
+using MedCorVis.Modules.Localization.Infrastructure.Persistence.Seeds;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

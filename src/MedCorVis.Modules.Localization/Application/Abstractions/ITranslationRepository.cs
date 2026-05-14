@@ -1,6 +1,6 @@
-using MedCorVis.Modules.Localization.Domain;
-
 namespace MedCorVis.Modules.Localization.Application.Abstractions;
+
+using MedCorVis.Modules.Localization.Domain;
 
 internal interface ITranslationRepository
 {

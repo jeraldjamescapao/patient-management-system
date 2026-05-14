@@ -1,8 +1,6 @@
-using MedCorVis.Modules.Localization.Domain;
-
 namespace MedCorVis.Modules.Localization.Infrastructure.Persistence;
 
-using Localization.Domain;
+using MedCorVis.Modules.Localization.Domain;
 using Microsoft.EntityFrameworkCore;
 
 internal sealed class LocalizationDbContext : DbContext

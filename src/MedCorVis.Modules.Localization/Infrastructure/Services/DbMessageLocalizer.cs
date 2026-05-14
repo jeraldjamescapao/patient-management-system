@@ -1,12 +1,9 @@
-using MedCorVis.Modules.Localization.Application.Abstractions;
-using MedCorVis.Modules.Localization.Application.Logging;
-
 namespace MedCorVis.Modules.Localization.Infrastructure.Services;
 
 using MedCorVis.Common.Caching;
 using MedCorVis.Common.Localization;
-using Localization.Application.Abstractions;
-using Localization.Application.Logging;
+using MedCorVis.Modules.Localization.Application.Abstractions;
+using MedCorVis.Modules.Localization.Application.Logging;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;

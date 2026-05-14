@@ -1,19 +1,13 @@
-using MedCorVis.Modules.Localization.Application.Abstractions;
-using MedCorVis.Modules.Localization.Application.Contracts.Requests;
-using MedCorVis.Modules.Localization.Application.Contracts.Responses;
-using MedCorVis.Modules.Localization.Application.Errors;
-using MedCorVis.Modules.Localization.Application.Logging;
-
 namespace MedCorVis.Modules.Localization.Application.Services;
 
 using MedCorVis.Common.Localization;
 using MedCorVis.Common.Results;
 using MedCorVis.Common.Services;
-using Localization.Application.Abstractions;
-using Localization.Application.Contracts.Requests;
-using Localization.Application.Contracts.Responses;
-using Localization.Application.Errors;
-using Localization.Application.Logging;
+using MedCorVis.Modules.Localization.Application.Abstractions;
+using MedCorVis.Modules.Localization.Application.Contracts.Requests;
+using MedCorVis.Modules.Localization.Application.Contracts.Responses;
+using MedCorVis.Modules.Localization.Application.Errors;
+using MedCorVis.Modules.Localization.Application.Logging;
 using Microsoft.Extensions.Logging;
 
 internal sealed class TranslationService : ITranslationService

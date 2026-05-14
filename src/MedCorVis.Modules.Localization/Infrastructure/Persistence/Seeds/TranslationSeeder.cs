@@ -1,12 +1,9 @@
-using MedCorVis.Modules.Localization.Application.Abstractions;
-using MedCorVis.Modules.Localization.Infrastructure.Persistence.Logging;
-
 namespace MedCorVis.Modules.Localization.Infrastructure.Persistence.Seeds;
 
 using MedCorVis.Common.Authorization;
 using MedCorVis.Common.Localization;
-using Localization.Application.Abstractions;
-using Localization.Infrastructure.Persistence.Logging;
+using MedCorVis.Modules.Localization.Application.Abstractions;
+using MedCorVis.Modules.Localization.Infrastructure.Persistence.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
