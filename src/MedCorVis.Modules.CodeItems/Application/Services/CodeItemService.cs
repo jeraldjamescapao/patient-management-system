@@ -1,21 +1,14 @@
+namespace MedCorVis.Modules.CodeItems.Application.Services;
+
+using MedCorVis.Common.Localization;
+using MedCorVis.Common.Results;
+using MedCorVis.Common.Services;
 using MedCorVis.Modules.CodeItems.Application.Abstractions;
 using MedCorVis.Modules.CodeItems.Application.Contracts.Requests;
 using MedCorVis.Modules.CodeItems.Application.Contracts.Responses;
 using MedCorVis.Modules.CodeItems.Application.Errors;
 using MedCorVis.Modules.CodeItems.Application.Logging;
 using MedCorVis.Modules.CodeItems.Domain;
-
-namespace MedCorVis.Modules.CodeItems.Application.Services;
-
-using MedCorVis.Common.Localization;
-using MedCorVis.Common.Results;
-using MedCorVis.Common.Services;
-using CodeItems.Application.Abstractions;
-using CodeItems.Application.Contracts.Requests;
-using CodeItems.Application.Contracts.Responses;
-using CodeItems.Application.Errors;
-using CodeItems.Application.Logging;
-using CodeItems.Domain;
 using Microsoft.Extensions.Logging;
 
 internal sealed class CodeItemService : ICodeItemService

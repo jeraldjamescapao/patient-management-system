@@ -1,8 +1,6 @@
-using MedCorVis.Modules.CodeItems.Domain;
-
 namespace MedCorVis.Modules.CodeItems.Infrastructure.Persistence.Configuration;
 
-using CodeItems.Domain;
+using MedCorVis.Modules.CodeItems.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

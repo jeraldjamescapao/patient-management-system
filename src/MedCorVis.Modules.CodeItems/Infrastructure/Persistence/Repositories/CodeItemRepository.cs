@@ -1,10 +1,7 @@
-using MedCorVis.Modules.CodeItems.Application.Abstractions;
-using MedCorVis.Modules.CodeItems.Domain;
-
 namespace MedCorVis.Modules.CodeItems.Infrastructure.Persistence.Repositories;
 
-using CodeItems.Application.Abstractions;
-using CodeItems.Domain;
+using MedCorVis.Modules.CodeItems.Application.Abstractions;
+using MedCorVis.Modules.CodeItems.Domain;
 using Microsoft.EntityFrameworkCore;
 
 internal sealed class CodeItemRepository : ICodeItemRepository

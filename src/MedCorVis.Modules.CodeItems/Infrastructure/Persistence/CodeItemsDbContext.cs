@@ -1,10 +1,7 @@
-using MedCorVis.Modules.CodeItems.Domain;
-using MedCorVis.Modules.CodeItems.Infrastructure.Persistence.Configuration;
-
 namespace MedCorVis.Modules.CodeItems.Infrastructure.Persistence;
 
-using CodeItems.Domain;
-using CodeItems.Infrastructure.Persistence.Configuration;
+using MedCorVis.Modules.CodeItems.Domain;
+using MedCorVis.Modules.CodeItems.Infrastructure.Persistence.Configuration;
 using Microsoft.EntityFrameworkCore;
 
 internal sealed class CodeItemsDbContext : DbContext

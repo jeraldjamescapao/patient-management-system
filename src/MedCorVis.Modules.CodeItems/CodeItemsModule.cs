@@ -1,10 +1,8 @@
-using MedCorVis.Modules.CodeItems.Infrastructure.Persistence;
-
 namespace MedCorVis.Modules.CodeItems;
 
 using MedCorVis.Common.Modules;
-using CodeItems.Configuration;
-using CodeItems.Infrastructure.Persistence;
+using MedCorVis.Modules.CodeItems.Configuration;
+using MedCorVis.Modules.CodeItems.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

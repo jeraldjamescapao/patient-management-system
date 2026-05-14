@@ -1,14 +1,9 @@
+namespace MedCorVis.Modules.CodeItems.Configuration;
+
 using MedCorVis.Modules.CodeItems.Application.Abstractions;
 using MedCorVis.Modules.CodeItems.Application.Services;
 using MedCorVis.Modules.CodeItems.Infrastructure.Persistence;
 using MedCorVis.Modules.CodeItems.Infrastructure.Persistence.Repositories;
-
-namespace MedCorVis.Modules.CodeItems.Configuration;
-
-using CodeItems.Application.Abstractions;
-using CodeItems.Application.Services;
-using CodeItems.Infrastructure.Persistence.Repositories;
-using CodeItems.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

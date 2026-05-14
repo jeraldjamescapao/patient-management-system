@@ -1,13 +1,9 @@
-using MedCorVis.Modules.CodeItems.Domain;
-using MedCorVis.Modules.CodeItems.Infrastructure.Persistence.Logging;
-using MedCorVis.Modules.CodeItems.Infrastructure.Persistence.Seeds;
-
 namespace MedCorVis.Modules.CodeItems.Infrastructure.Persistence;
 
 using MedCorVis.Common.Authorization;
-using CodeItems.Domain;
-using CodeItems.Infrastructure.Persistence.Logging;
-using CodeItems.Infrastructure.Persistence.Seeds;
+using MedCorVis.Modules.CodeItems.Domain;
+using MedCorVis.Modules.CodeItems.Infrastructure.Persistence.Logging;
+using MedCorVis.Modules.CodeItems.Infrastructure.Persistence.Seeds;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;

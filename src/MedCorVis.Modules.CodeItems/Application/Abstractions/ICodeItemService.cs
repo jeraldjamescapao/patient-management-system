@@ -1,11 +1,8 @@
-using MedCorVis.Modules.CodeItems.Application.Contracts.Requests;
-using MedCorVis.Modules.CodeItems.Application.Contracts.Responses;
-
 namespace MedCorVis.Modules.CodeItems.Application.Abstractions;
 
 using MedCorVis.Common.Results;
-using CodeItems.Application.Contracts.Requests;
-using CodeItems.Application.Contracts.Responses;
+using MedCorVis.Modules.CodeItems.Application.Contracts.Requests;
+using MedCorVis.Modules.CodeItems.Application.Contracts.Responses;
 
 public interface ICodeItemService
 {

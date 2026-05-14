@@ -1,8 +1,6 @@
-using MedCorVis.Modules.CodeItems.Domain;
-
 namespace MedCorVis.Modules.CodeItems.Application.Abstractions;
 
-using CodeItems.Domain;
+using MedCorVis.Modules.CodeItems.Domain;
 
 internal interface ICodeItemRepository
 {

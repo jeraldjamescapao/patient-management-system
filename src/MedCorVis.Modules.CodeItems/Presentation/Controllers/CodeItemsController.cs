@@ -1,13 +1,10 @@
-using MedCorVis.Modules.CodeItems.Application.Abstractions;
-using MedCorVis.Modules.CodeItems.Application.Contracts.Requests;
-
 namespace MedCorVis.Modules.CodeItems.Presentation.Controllers;
 
 using Asp.Versioning;
 using MedCorVis.Common.Authorization;
 using MedCorVis.Common.Controllers;
-using CodeItems.Application.Abstractions;
-using CodeItems.Application.Contracts.Requests;
+using MedCorVis.Modules.CodeItems.Application.Abstractions;
+using MedCorVis.Modules.CodeItems.Application.Contracts.Requests;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

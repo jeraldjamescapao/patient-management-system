@@ -1,8 +1,6 @@
-using MedCorVis.Modules.CodeItems.Domain;
-
 namespace MedCorVis.Modules.CodeItems.Application.Contracts.Requests;
 
-using CodeItems.Domain;
+using MedCorVis.Modules.CodeItems.Domain;
 using System.ComponentModel.DataAnnotations;
 
 public sealed record CreateCategoryRequest(
