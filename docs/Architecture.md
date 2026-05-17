@@ -100,8 +100,7 @@ Each module owns its own `DbContext`, migrations, and persistence configuration.
 Database schema separation is handled per module using dedicated schemas
 (e.g. `Identity`, `Localization`, `CodeItems`).
 
-EF Core is used as the ORM abstraction, allowing future database provider changes
-with limited infrastructure-layer modifications.
+EF Core handles all database access.
 
 ## Error Handling
 
@@ -127,8 +126,26 @@ All error responses include `traceId` and `code` extensions:
   "code": "LOCALIZATION_TRANSLATION_NOT_FOUND"
 }
 ```
-
 Error code format: `MODULE_RESOURCE_DESCRIPTION` (e.g. `CODEITEMS_ITEM_NOT_FOUND`).
+
+
+Model validation errors (e.g. missing required fields, invalid date ranges) return 400
+with a per-field breakdown:
+
+```json
+{
+  "type": "https://tools.ietf.org/html/rfc9110#section-15.5.1",
+  "title": "Bad Request",
+  "status": 400,
+  "detail": "One or more validation errors occurred.",
+  "instance": "/api/v1/categories/1/items",
+  "traceId": "...",
+  "errors": {
+    "ValidFrom": ["ValidFrom must be before ValidTo."],
+    "ValidTo":   ["ValidFrom must be before ValidTo."]
+  }
+}
+```
 
 ## Cross-Module Communication
 
@@ -145,9 +162,8 @@ must equal the categoryId in the URL). This applies to all modules.
 ## Identity Module
 
 `IIdentityUnitOfWork` is introduced in the Application layer to keep `IdentityDbContext`
-out of `AuthService`. This enforces the Dependency Inversion Principle, keeps the
-service testable without a real database, and prepares the module for extraction
-without restructuring the service layer.
+out of `AuthService`. The service depends on the interface, not the EF context directly.
+This keeps the service testable and the module portable.
 
 Refresh token rotation uses SHA-256 hashing. The raw token is sent to the client;
 only the hash is stored. SHA-256 is appropriate here because refresh tokens are
@@ -158,10 +174,9 @@ the system treats it as a stolen token and revokes the entire token family for t
 
 ## Localization Module
 
-`IMessageLocalizer` and `ILocalizerCache` are separated into two interfaces following
-the Interface Segregation Principle. Email service depends only on `IMessageLocalizer`.
-Cache warmup on startup and admin refresh depend only on `ILocalizerCache`. One
-implementation (`DbMessageLocalizer`) satisfies both.
+`IMessageLocalizer` and `ILocalizerCache` are two separate interfaces. The email service
+depends only on `IMessageLocalizer`. Cache warmup and admin refresh depend only on
+`ILocalizerCache`. One implementation (`DbMessageLocalizer`) satisfies both.
 
 Translations are stored in SQL Server (`Localization` schema) and loaded into an
 in-memory cache on startup. The cache has no automatic expiry — it persists until
@@ -197,6 +212,13 @@ A mismatch returns `404 Not Found` to avoid confirming the resource exists elsew
 Items and categories carry `IsSystemDefined`, `IsEditable`, and `IsDeletable` flags.
 System-defined records are seeded and protected from accidental deletion. Admins can
 create additional entries freely.
+
+Items support an optional validity window via `ValidFrom` and `ValidTo` (`DateOnly?`).
+The consumer endpoint filters out items outside their validity window at query time.
+Items with no window set are always visible. Validity is admin-controlled and mutable.
+
+`ValidDateRangeAttribute` in `MedCorVis.Common.Validations` handles cross-field date
+range validation. Any request contract with a date range can use it.
 
 ## Users Module
 
@@ -238,6 +260,8 @@ Log event ID ranges by module:
 
 Each service is tested in isolation. Repositories, `UserManager`, and other
 infrastructure dependencies are substituted using NSubstitute.
+
+Domain logic is tested directly against entity methods with no infrastructure involved.
 
 `InternalsVisibleTo` is declared in each module's `.csproj`
 for both the test project and `DynamicProxyGenAssembly2`.
