@@ -9,6 +9,8 @@ using Xunit;
 
 public sealed class UpdateItemTests : CodeItemServiceTestBase
 {
+    private static readonly DateOnly Today = DateOnly.FromDateTime(DateTime.UtcNow);
+    
     private static readonly UpdateItemRequest ValidRequest =
         new(20, "Updated description");
 
@@ -81,5 +83,41 @@ public sealed class UpdateItemTests : CodeItemServiceTestBase
         await Repository
             .DidNotReceive()
             .SaveChangesAsync(Arg.Any<CancellationToken>());
+    }
+    
+    [Fact]
+    public async Task UpdateItemAsync_WithValidityWindow_SetsValidityOnItem()
+    {
+        var item = CreateItem();
+
+        Repository
+            .GetItemByIdAsync(1, Arg.Any<CancellationToken>())
+            .Returns(item);
+
+        var request = new UpdateItemRequest(10, null, Today, Today.AddDays(30));
+
+        var result = await Sut.UpdateItemAsync(1, 1, request);
+
+        result.IsSuccess.Should().BeTrue();
+        result.Value!.ValidFrom.Should().Be(Today);
+        result.Value.ValidTo.Should().Be(Today.AddDays(30));
+    }
+    
+    [Fact]
+    public async Task UpdateItemAsync_ClearValidityWindow_SetsNulls()
+    {
+        var item = CreateItem(validFrom: Today, validTo: Today.AddDays(30));
+
+        Repository
+            .GetItemByIdAsync(1, Arg.Any<CancellationToken>())
+            .Returns(item);
+
+        var request = new UpdateItemRequest(10, null, null, null);
+
+        var result = await Sut.UpdateItemAsync(1, 1, request);
+
+        result.IsSuccess.Should().BeTrue();
+        result.Value!.ValidFrom.Should().BeNull();
+        result.Value.ValidTo.Should().BeNull();
     }
 }

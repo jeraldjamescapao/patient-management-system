@@ -13,6 +13,8 @@ internal sealed class CodeItem : IAuditableEntity
     public string           Code          { get; private set; } = null!;
     public string?          Description   { get; private set; }
     public int              SortOrder     { get; private set; }
+    public DateOnly? ValidFrom { get; private set; }
+    public DateOnly? ValidTo   { get; private set; }
 
     // Visibility
     public bool             IsActive      { get; private set; }
@@ -40,6 +42,8 @@ internal sealed class CodeItem : IAuditableEntity
         string code,
         string? description,
         int sortOrder,
+        DateOnly? validFrom,
+        DateOnly? validTo,
         bool isSystemDefined,
         bool isEditable,
         bool isDeletable,
@@ -49,6 +53,8 @@ internal sealed class CodeItem : IAuditableEntity
         Code            = code;
         Description     = description;
         SortOrder       = sortOrder;
+        ValidFrom       = validFrom;
+        ValidTo         = validTo;
         IsActive        = true;
         IsSystemDefined = isSystemDefined;
         IsEditable      = isEditable;
@@ -63,30 +69,42 @@ internal sealed class CodeItem : IAuditableEntity
         string code,
         string? description,
         int sortOrder,
+        DateOnly? validFrom,
+        DateOnly? validTo,
         bool isSystemDefined,
         bool isEditable,
         bool isDeletable,
         string createdBy)
     {
         if (categoryId <= 0)
-            throw new DomainException("DOMAIN_CODEITEM_INVALID_CATEGORY", "CategoryId must be greater than zero.");
+            throw new DomainException("DOMAIN_CODEITEM_INVALID_CATEGORY", 
+                "CategoryId must be greater than zero.");
         
         if (string.IsNullOrWhiteSpace(code))
-            throw new DomainException("DOMAIN_CODEITEM_INVALID_CODE", "Code is required.");
+            throw new DomainException("DOMAIN_CODEITEM_INVALID_CODE", 
+                "Code is required.");
         
         var trimmedCode = code.Trim();
         
         if (trimmedCode.Length > CodeMaxLength)
-            throw new DomainException("DOMAIN_CODEITEM_INVALID_CODE", $"Code cannot exceed {CodeMaxLength} characters.");
+            throw new DomainException("DOMAIN_CODEITEM_INVALID_CODE", 
+                $"Code cannot exceed {CodeMaxLength} characters.");
+        
+        if (validFrom.HasValue && validTo.HasValue && validFrom.Value >= validTo.Value)
+            throw new DomainException("DOMAIN_CODEITEM_INVALID_VALIDITY_WINDOW", 
+                "ValidFrom must be before ValidTo.");
         
         if (string.IsNullOrWhiteSpace(createdBy))
-            throw new DomainException("DOMAIN_CODEITEM_INVALID_CREATED_BY", "CreatedBy is required.");
+            throw new DomainException("DOMAIN_CODEITEM_INVALID_CREATED_BY", 
+                "CreatedBy is required.");
 
         return new CodeItem(
             categoryId,
             trimmedCode,
             string.IsNullOrWhiteSpace(description) ? null : description.Trim(),
             sortOrder,
+            validFrom,
+            validTo,
             isSystemDefined,
             isEditable,
             isDeletable,
@@ -142,5 +160,25 @@ internal sealed class CodeItem : IAuditableEntity
         IsDeleted    = true;
         DeletedAtUtc = DateTimeOffset.UtcNow;
         DeletedBy    = deletedBy;
+    }
+
+    public void SetValidity(DateOnly? validFrom, DateOnly? validTo, string modifiedBy)
+    {
+        if (!IsEditable)
+            throw new DomainException("DOMAIN_CODEITEM_NOT_EDITABLE", 
+                "This item cannot be edited.");
+
+        if (validFrom.HasValue && validTo.HasValue && validFrom.Value >= validTo.Value)
+            throw new DomainException("DOMAIN_CODEITEM_INVALID_VALIDITY_WINDOW",
+                "ValidFrom must be before ValidTo.");
+        
+        if (string.IsNullOrWhiteSpace(modifiedBy))
+            throw new DomainException("DOMAIN_CODEITEM_INVALID_MODIFIED_BY", 
+                "ModifiedBy is required.");
+        
+        ValidFrom     = validFrom;
+        ValidTo       = validTo;
+        ModifiedAtUtc = DateTimeOffset.UtcNow;
+        ModifiedBy    = modifiedBy;
     }
 }

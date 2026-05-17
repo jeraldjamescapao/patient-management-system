@@ -214,6 +214,8 @@ internal sealed class CodeItemService : ICodeItemService
             request.Code,
             request.Description,
             request.SortOrder,
+            request.ValidFrom,
+            request.ValidTo,
             isSystemDefined: false,
             isEditable: true,
             isDeletable: true,
@@ -240,6 +242,8 @@ internal sealed class CodeItemService : ICodeItemService
             return Result<ItemResponse>.UnprocessableEntity(CodeItemErrors.ItemNotEditable);
 
         item.Update(request.Description, request.SortOrder, _currentUserService.UserId);
+        item.SetValidity(request.ValidFrom, request.ValidTo, _currentUserService.UserId);
+        
         await _repository.SaveChangesAsync(ct);
 
         return Result<ItemResponse>.Success(MapItem(item));
@@ -422,8 +426,10 @@ internal sealed class CodeItemService : ICodeItemService
     public async Task<Result<CodeItemListResponse>> GetActiveItemsAsync(
         string categoryCode, CancellationToken ct = default)
     {
+        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+        
         var (category, items) =
-            await _repository.GetActiveByCategoryCodeAsync(categoryCode, ct);
+            await _repository.GetActiveByCategoryCodeAsync(categoryCode, today, ct);
 
         if (category is null)
         {
@@ -437,12 +443,13 @@ internal sealed class CodeItemService : ICodeItemService
 
         var culture = _currentCultureService.Culture;
 
-        var labels = await _repository.GetItemLabelsByCategoryAsync(category.Id, culture, ct);
-
+        var labels = await _repository
+            .GetItemLabelsByCategoryAsync(category.Id, culture, today, ct);
+        
         IReadOnlyDictionary<long, string>? englishLabels = null;
         if (culture != SupportedCultures.English)
             englishLabels = await _repository.GetItemLabelsByCategoryAsync(
-                category.Id, SupportedCultures.English, ct);
+                category.Id, SupportedCultures.English, today, ct);
 
         var entries = items.Select(item =>
         {
@@ -524,6 +531,8 @@ internal sealed class CodeItemService : ICodeItemService
             i.IsDeletable, 
             i.IsDeleted, 
             i.SortOrder,
+            i.ValidFrom,
+            i.ValidTo,
             i.CreatedAtUtc, 
             i.CreatedBy, 
             i.ModifiedAtUtc, 

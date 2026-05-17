@@ -13,7 +13,8 @@ public sealed class GetActiveItemsTests : CodeItemServiceTestBase
     public async Task GetActiveItemsAsync_CategoryNotFound_ReturnsNotFound()
     {
         Repository
-            .GetActiveByCategoryCodeAsync("nonexistent", Arg.Any<CancellationToken>())
+            .GetActiveByCategoryCodeAsync("nonexistent", 
+                Arg.Any<DateOnly>(), Arg.Any<CancellationToken>())
             .Returns(((Category?)null, (IReadOnlyList<CodeItem>)[]));
 
         var result = await Sut.GetActiveItemsAsync("nonexistent");
@@ -29,7 +30,8 @@ public sealed class GetActiveItemsTests : CodeItemServiceTestBase
         var category = CreateCategory("appointment.type");
     
         Repository
-            .GetActiveByCategoryCodeAsync("appointment.type", Arg.Any<CancellationToken>())
+            .GetActiveByCategoryCodeAsync(
+                "appointment.type", Arg.Any<DateOnly>(), Arg.Any<CancellationToken>())
             .Returns((category, (IReadOnlyList<CodeItem>)[]));
     
         var result = await Sut.GetActiveItemsAsync("appointment.type");
@@ -46,11 +48,13 @@ public sealed class GetActiveItemsTests : CodeItemServiceTestBase
         var item     = CreateItem(1, "Consultation");
     
         Repository
-            .GetActiveByCategoryCodeAsync("appointment.type", Arg.Any<CancellationToken>())
+            .GetActiveByCategoryCodeAsync("appointment.type", 
+                Arg.Any<DateOnly>(),Arg.Any<CancellationToken>())
             .Returns((category, (IReadOnlyList<CodeItem>)[item]));
     
         Repository
-            .GetItemLabelsByCategoryAsync(category.Id, SupportedCultures.English, Arg.Any<CancellationToken>())
+            .GetItemLabelsByCategoryAsync(category.Id, SupportedCultures.English, 
+                Arg.Any<DateOnly>(), Arg.Any<CancellationToken>())
             .Returns((IReadOnlyDictionary<long, string>)new Dictionary<long, string>
             {
                 [item.Id] = "Consultation"
@@ -71,11 +75,13 @@ public sealed class GetActiveItemsTests : CodeItemServiceTestBase
         var item     = CreateItem(1, "Consultation");
     
         Repository
-            .GetActiveByCategoryCodeAsync("appointment.type", Arg.Any<CancellationToken>())
+            .GetActiveByCategoryCodeAsync("appointment.type", 
+                Arg.Any<DateOnly>(), Arg.Any<CancellationToken>())
             .Returns((category, (IReadOnlyList<CodeItem>)[item]));
     
         Repository
-            .GetItemLabelsByCategoryAsync(Arg.Any<long>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
+            .GetItemLabelsByCategoryAsync(Arg.Any<long>(), Arg.Any<string>(), 
+                Arg.Any<DateOnly>(), Arg.Any<CancellationToken>())
             .Returns((IReadOnlyDictionary<long, string>)new Dictionary<long, string>());
     
         var result = await Sut.GetActiveItemsAsync("appointment.type");
@@ -93,15 +99,18 @@ public sealed class GetActiveItemsTests : CodeItemServiceTestBase
         var item     = CreateItem(1, "Consultation");
     
         Repository
-            .GetActiveByCategoryCodeAsync("appointment.type", Arg.Any<CancellationToken>())
+            .GetActiveByCategoryCodeAsync("appointment.type", 
+                Arg.Any<DateOnly>(), Arg.Any<CancellationToken>())
             .Returns((category, (IReadOnlyList<CodeItem>)[item]));
     
         Repository
-            .GetItemLabelsByCategoryAsync(category.Id, SupportedCultures.French, Arg.Any<CancellationToken>())
+            .GetItemLabelsByCategoryAsync(category.Id, SupportedCultures.French, 
+                Arg.Any<DateOnly>(), Arg.Any<CancellationToken>())
             .Returns((IReadOnlyDictionary<long, string>)new Dictionary<long, string>());
     
         Repository
-            .GetItemLabelsByCategoryAsync(category.Id, SupportedCultures.English, Arg.Any<CancellationToken>())
+            .GetItemLabelsByCategoryAsync(category.Id, SupportedCultures.English, 
+                Arg.Any<DateOnly>(), Arg.Any<CancellationToken>())
             .Returns((IReadOnlyDictionary<long, string>)new Dictionary<long, string>
             {
                 [item.Id] = "Consultation"

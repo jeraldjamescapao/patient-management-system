@@ -130,6 +130,8 @@ internal static class CodeItemSeeder
                         itemSeed.Code,
                         itemSeed.Description,
                         itemSeed.SortOrder,
+                        validFrom: null,
+                        validTo:   null,
                         isSystemDefined: true,
                         isEditable: true,
                         isDeletable: false,

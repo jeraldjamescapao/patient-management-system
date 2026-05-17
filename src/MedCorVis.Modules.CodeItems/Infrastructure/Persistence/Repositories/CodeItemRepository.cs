@@ -144,7 +144,7 @@ internal sealed class CodeItemRepository : ICodeItemRepository
     #region Consumer
     
     public async Task<(Category? Category, IReadOnlyList<CodeItem> Items)> GetActiveByCategoryCodeAsync(
-        string categoryCode, CancellationToken ct = default)
+        string categoryCode, DateOnly today, CancellationToken ct = default)
     {
         var category = await _context.Categories
             .AsNoTracking()
@@ -155,7 +155,12 @@ internal sealed class CodeItemRepository : ICodeItemRepository
 
         var items = await _context.Items
             .AsNoTracking()
-            .Where(i => i.CategoryId == category.Id && i.IsActive && !i.IsDeleted)
+            .Where(i =>
+                i.CategoryId == category.Id &&
+                i.IsActive   &&
+                !i.IsDeleted &&
+                (i.ValidFrom == null || i.ValidFrom <= today) &&
+                (i.ValidTo   == null || i.ValidTo   >= today))
             .OrderBy(i => i.SortOrder)
             .ToListAsync(ct);
 
@@ -163,7 +168,7 @@ internal sealed class CodeItemRepository : ICodeItemRepository
     }
     
     public async Task<IReadOnlyDictionary<long, string>> GetItemLabelsByCategoryAsync(
-        long categoryId, string culture, CancellationToken ct = default)
+        long categoryId, string culture, DateOnly today, CancellationToken ct = default)
     {
         return await _context.Translations
             .AsNoTracking()
@@ -173,7 +178,12 @@ internal sealed class CodeItemRepository : ICodeItemRepository
                 t.IsActive                                         &&
                 !t.IsDeleted                                       &&
                 _context.Items
-                    .Where(i => i.CategoryId == categoryId && i.IsActive && !i.IsDeleted)
+                    .Where(i =>
+                        i.CategoryId == categoryId &&
+                        i.IsActive   &&
+                        !i.IsDeleted &&
+                        (i.ValidFrom == null || i.ValidFrom <= today) &&
+                        (i.ValidTo   == null || i.ValidTo   >= today))
                     .Select(i => i.Id)
                     .Contains(t.EntityId))
             .ToDictionaryAsync(t => t.EntityId, t => t.Label, ct);

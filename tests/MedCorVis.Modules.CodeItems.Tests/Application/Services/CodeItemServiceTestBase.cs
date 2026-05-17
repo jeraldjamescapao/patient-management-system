@@ -60,13 +60,17 @@ public abstract class CodeItemServiceTestBase
         bool isActive       = true,
         bool isSystemDefined = false,
         bool isEditable     = true,
-        bool isDeletable    = true)
+        bool isDeletable    = true,
+        DateOnly? validFrom  = null,
+        DateOnly? validTo    = null)
     {
         var item = CodeItem.Create(
             categoryId,
             code,
             "Test item description",
             10,
+            validFrom,
+            validTo,
             isSystemDefined,
             isEditable,
             isDeletable,

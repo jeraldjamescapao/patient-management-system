@@ -32,9 +32,9 @@ internal interface ICodeItemRepository
     
     // Consumer
     Task<(Category? Category, IReadOnlyList<CodeItem> Items)> GetActiveByCategoryCodeAsync(
-        string categoryCode, CancellationToken ct = default);
+        string categoryCode, DateOnly today, CancellationToken ct = default);
     Task<IReadOnlyDictionary<long, string>> GetItemLabelsByCategoryAsync(
-        long categoryId, string culture, CancellationToken ct = default);
+        long categoryId, string culture, DateOnly today, CancellationToken ct = default);
     
     // Persistence
     Task SaveChangesAsync(CancellationToken ct = default);

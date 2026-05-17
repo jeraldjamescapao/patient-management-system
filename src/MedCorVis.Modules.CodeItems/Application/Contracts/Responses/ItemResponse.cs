@@ -11,6 +11,8 @@ public sealed record ItemResponse(
     bool IsDeletable,
     bool IsDeleted,
     int SortOrder,
+    DateOnly? ValidFrom,
+    DateOnly? ValidTo,
     DateTimeOffset CreatedAtUtc,
     string CreatedBy,
     DateTimeOffset? ModifiedAtUtc,

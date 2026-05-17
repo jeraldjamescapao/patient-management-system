@@ -33,6 +33,12 @@ internal sealed class CodeItemConfiguration : IEntityTypeConfiguration<CodeItem>
             .IsRequired()
             .HasDefaultValue(0);
         
+        builder.Property(x => x.ValidFrom)
+            .HasColumnType("date");
+
+        builder.Property(x => x.ValidTo)
+            .HasColumnType("date");
+        
         builder.Property(x => x.IsSystemDefined)
             .IsRequired()
             .HasDefaultValue(false);
@@ -79,5 +85,8 @@ internal sealed class CodeItemConfiguration : IEntityTypeConfiguration<CodeItem>
         
         builder.HasIndex(x => x.IsDeleted)
             .HasDatabaseName("IX_Items_IsDeleted");
+        
+        builder.HasIndex(x => new  { x.IsActive, x.IsDeleted, x.ValidFrom, x.ValidTo })
+            .HasDatabaseName("IX_Items_Validity");
     }
 }

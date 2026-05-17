@@ -1,3 +1,4 @@
+using MedCorVis.Api.Configuration;
 using MedCorVis.Api.Middleware;
 using MedCorVis.Common.Configuration;
 using MedCorVis.Common.Modules;
@@ -26,6 +27,7 @@ try
     
     builder.Services.AddOpenApi();
     builder.Services.AddProblemDetails();
+    builder.Services.AddValidationProblemDetails();
     builder.Services.AddApiVersioning().AddMvc();
     
     builder.Services.RegisterModules(
