@@ -144,6 +144,34 @@ internal sealed class CodeItemService : ICodeItemService
             return Result<bool>.UnprocessableEntity(CodeItemErrors.CategoryHasActiveItems);
 
         category.Delete(_currentUserService.UserId);
+        
+        // Cascade to all items (including already-deleted ones, to clean up their translations)
+        var items = await _repository.GetTrackedItemsByCategoryIdAsync(id, ct);
+        var itemIds = items
+            .Where(i => !i.IsDeleted)
+            .Select(i => i.Id)
+            .ToList();
+        
+        foreach (var item in items.Where(i => !i.IsDeleted))
+            item.Delete(_currentUserService.UserId);
+        
+        if (itemIds.Count > 0)
+        {
+            var itemTranslations = 
+                await _repository.GetTrackedTranslationsByEntityIdsAsync(
+                    CodeItemTranslation.EntityTypeItem, itemIds, ct);
+            
+            foreach (var t in itemTranslations)
+                t.Delete(_currentUserService.UserId);
+        }
+        
+        var categoryTranslations = 
+            await _repository.GetTrackedTranslationsByEntityAsync(
+                CodeItemTranslation.EntityTypeCategory, id, ct);
+        
+        foreach (var t in categoryTranslations)
+            t.Delete(_currentUserService.UserId);
+        
         await _repository.SaveChangesAsync(ct);
 
         return Result<bool>.Success(true);
@@ -329,6 +357,8 @@ internal sealed class CodeItemService : ICodeItemService
         var items 
             = await _repository.GetTrackedItemsByCategoryIdAndIdsAsync(categoryId, requestedIds, ct);
 
+        // Count mismatch means one or more IDs either don't exist
+        // or don't belong to this category. Return 404 either way.
         if (items.Count != requestedIds.Count)
         {
             CodeItemLogMessages.ItemNotFound(_logger, categoryId, null);

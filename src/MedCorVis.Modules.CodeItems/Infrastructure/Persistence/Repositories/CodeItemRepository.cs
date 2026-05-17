@@ -27,20 +27,29 @@ internal sealed class CodeItemRepository : ICodeItemRepository
     public async Task<Category?> GetCategoryByIdAsync(long id, CancellationToken ct = default)
     {
         return await _context.Categories
-            .FirstOrDefaultAsync(c => c.Id == id && !c.IsDeleted, ct);
+            .FirstOrDefaultAsync(c => 
+                c.Id == id && 
+                !c.IsDeleted, 
+                ct);
     }
     
     public async Task<Category?> GetCategoryByCodeAsync(string code, CancellationToken ct = default)
     {
         return await _context.Categories
-            .FirstOrDefaultAsync(c => c.Code == code && !c.IsDeleted, ct);
+            .FirstOrDefaultAsync(c => 
+                c.Code == code && 
+                !c.IsDeleted, 
+                ct);
     }
     
     public async Task<bool> CategoryCodeExistsAsync(string code, CancellationToken ct = default)
     {
         return await _context.Categories
             .AsNoTracking()
-            .AnyAsync(c => c.Code == code && !c.IsDeleted, ct);
+            .AnyAsync(c => 
+                c.Code == code && 
+                !c.IsDeleted, 
+                ct);
     }
     
     public async Task AddCategoryAsync(Category category, CancellationToken ct = default)
@@ -51,6 +60,17 @@ internal sealed class CodeItemRepository : ICodeItemRepository
     #endregion
     
     #region Items
+
+    public async Task<IReadOnlyList<CodeItem>> GetTrackedItemsByCategoryIdAsync(
+        long categoryId, CancellationToken ct = default)
+    {
+        return await _context.Items
+            .Where(i => 
+                i.CategoryId == categoryId && 
+                !i.IsDeleted)
+            .OrderBy(i => i.SortOrder)
+            .ToListAsync(ct);       
+    }
     
     public async Task<IReadOnlyList<CodeItem>> GetTrackedItemsByCategoryIdAndIdsAsync(
         long categoryId, IReadOnlyCollection<long> ids, CancellationToken ct = default)
@@ -68,7 +88,9 @@ internal sealed class CodeItemRepository : ICodeItemRepository
     {
         return await _context.Items
             .AsNoTracking()
-            .Where(i => i.CategoryId == categoryId && !i.IsDeleted)
+            .Where(i => 
+                i.CategoryId == categoryId && 
+                !i.IsDeleted)
             .OrderBy(i => i.SortOrder)
             .ToListAsync(ct);
     }
@@ -76,7 +98,10 @@ internal sealed class CodeItemRepository : ICodeItemRepository
     public async Task<CodeItem?> GetItemByIdAsync(long id, CancellationToken ct = default)
     {
         return await _context.Items
-            .FirstOrDefaultAsync(i => i.Id == id && !i.IsDeleted, ct);
+            .FirstOrDefaultAsync(i => 
+                i.Id == id && 
+                !i.IsDeleted, 
+                ct);
     }
     
     public async Task<bool> ItemCodeExistsAsync(
@@ -84,7 +109,11 @@ internal sealed class CodeItemRepository : ICodeItemRepository
     {
         return await _context.Items
             .AsNoTracking()
-            .AnyAsync(i => i.CategoryId == categoryId && i.Code == code && !i.IsDeleted, ct);
+            .AnyAsync(i => 
+                i.CategoryId == categoryId && 
+                i.Code == code && 
+                !i.IsDeleted, 
+                ct);
     }
     
     public async Task<bool> CategoryHasActiveItemsAsync(
@@ -92,7 +121,11 @@ internal sealed class CodeItemRepository : ICodeItemRepository
     {
         return await _context.Items
             .AsNoTracking()
-            .AnyAsync(i => i.CategoryId == categoryId && i.IsActive && !i.IsDeleted, ct);
+            .AnyAsync(i => 
+                i.CategoryId == categoryId && 
+                i.IsActive && 
+                !i.IsDeleted, 
+                ct);
     }
     
     public async Task AddItemAsync(CodeItem item, CancellationToken ct = default)
@@ -109,7 +142,10 @@ internal sealed class CodeItemRepository : ICodeItemRepository
     {
         return await _context.Translations
             .AsNoTracking()
-            .Where(t => t.EntityType == entityType && t.EntityId == entityId && !t.IsDeleted)
+            .Where(t => 
+                t.EntityType == entityType && 
+                t.EntityId == entityId && 
+                !t.IsDeleted)
             .OrderBy(t => t.Culture)
             .ToListAsync(ct);
     }
@@ -118,9 +154,24 @@ internal sealed class CodeItemRepository : ICodeItemRepository
         string entityType, long entityId, CancellationToken ct = default)
     {
         return await _context.Translations
-            .Where(t => t.EntityType == entityType && t.EntityId == entityId && !t.IsDeleted)
+            .Where(t => 
+                t.EntityType == entityType && 
+                t.EntityId == entityId && 
+                !t.IsDeleted)
             .OrderBy(t => t.Culture)
             .ToListAsync(ct);
+    }
+
+    public async Task<IReadOnlyList<CodeItemTranslation>> GetTrackedTranslationsByEntityIdsAsync(
+        string entityType, IReadOnlyCollection<long> entityIds, CancellationToken ct = default)
+    {
+        return await _context.Translations
+            .Where(t => 
+                t.EntityType == entityType && 
+                entityIds.Contains(t.EntityId) && 
+                !t.IsDeleted)
+            .OrderBy(t => t.Culture)
+            .ToListAsync(ct);       
     }
     
     public async Task<CodeItemTranslation?> GetTranslationAsync(
@@ -148,7 +199,11 @@ internal sealed class CodeItemRepository : ICodeItemRepository
     {
         var category = await _context.Categories
             .AsNoTracking()
-            .FirstOrDefaultAsync(c => c.Code == categoryCode && c.IsActive && !c.IsDeleted, ct);
+            .FirstOrDefaultAsync(c => 
+                c.Code == categoryCode && 
+                c.IsActive && 
+                !c.IsDeleted, 
+                ct);
 
         if (category is null)
             return (null, []);

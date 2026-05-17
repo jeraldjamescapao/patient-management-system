@@ -34,5 +34,7 @@ public interface ICodeItemService
     Task<Result<TranslationResponse>> UpsertItemTranslationAsync(long categoryId, long itemId, string culture, UpsertTranslationRequest request, CancellationToken ct = default);
     
     // Consumer
+    // No cache here by design.
+    // CodeItems must reflect admin changes immediately.
     Task<Result<CodeItemListResponse>> GetActiveItemsAsync(string categoryCode, CancellationToken ct = default);
 }

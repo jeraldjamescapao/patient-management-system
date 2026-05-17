@@ -12,6 +12,8 @@ internal interface ICodeItemRepository
     Task AddCategoryAsync(Category category, CancellationToken ct = default);
 
     // Items
+    Task<IReadOnlyList<CodeItem>> GetTrackedItemsByCategoryIdAsync(
+        long categoryId, CancellationToken ct = default);
     Task<IReadOnlyList<CodeItem>> GetTrackedItemsByCategoryIdAndIdsAsync(
         long categoryId, IReadOnlyCollection<long> ids, CancellationToken ct = default);
     Task<IReadOnlyList<CodeItem>> GetItemsByCategoryIdAsync(
@@ -26,6 +28,8 @@ internal interface ICodeItemRepository
         string entityType, long entityId, CancellationToken ct = default);
     Task<IReadOnlyList<CodeItemTranslation>> GetTrackedTranslationsByEntityAsync(
         string entityType, long entityId, CancellationToken ct = default);
+    Task<IReadOnlyList<CodeItemTranslation>> GetTrackedTranslationsByEntityIdsAsync(
+        string entityType, IReadOnlyCollection<long> entityIds, CancellationToken ct = default);
     Task<CodeItemTranslation?> GetTranslationAsync(
         string entityType, long entityId, string culture, CancellationToken ct = default);
     Task AddTranslationAsync(CodeItemTranslation translation, CancellationToken ct = default);
