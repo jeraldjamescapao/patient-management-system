@@ -4,7 +4,7 @@ using MedCorVis.Common.Domain;
 using Microsoft.AspNetCore.Identity;
 using MedCorVis.Common.Auditing;
 
-public sealed class ApplicationUser : IdentityUser<Guid>, IAuditableEntity
+public sealed class ApplicationUser : IdentityUser<Guid>, IAuditableEntity, IDeletableEntity
 {
     #region Constants
     
@@ -22,17 +22,27 @@ public sealed class ApplicationUser : IdentityUser<Guid>, IAuditableEntity
     
     #region Properties
     
+    // User Profile
     public string FirstName { get; private set; } = null!;
     public string LastName { get; private set; } = null!;
     public DateOnly BirthDate { get; private set; }
     public string? PreferredCulture { get; private set; }
+    
+    // Visibility
     public bool IsActive { get; private set; } = true;
     
+    // Soft Delete
+    public bool             IsDeleted     { get; private set; }
+    public DateTimeOffset?  DeletedAtUtc  { get; private set; }
+    public string?          DeletedBy     { get; private set; }
+    public DateTimeOffset?  DeletionRequestedAtUtc { get; private set; }
+    
+    // Audit
     public DateTimeOffset CreatedAtUtc { get; private set; }
     public DateTimeOffset? ModifiedAtUtc { get; private set; }
     public string CreatedBy { get; private set; } = null!;
     public string? ModifiedBy { get; private set; }
-
+    
     public string FullName => $"{FirstName} {LastName}";
     public string FullNameInverted => $"{LastName}, {FirstName}";
     public string FullNameWithInitials =>
@@ -179,6 +189,54 @@ public sealed class ApplicationUser : IdentityUser<Guid>, IAuditableEntity
         IsActive = true;
         ModifiedAtUtc = DateTimeOffset.UtcNow; 
         ModifiedBy = trimmedModifiedBy;
+    }
+    
+    public void RequestDeletion()
+    {
+        if (IsDeleted) return;
+        if (DeletionRequestedAtUtc.HasValue) return;
+
+        DeletionRequestedAtUtc = DateTimeOffset.UtcNow;
+        ModifiedAtUtc          = DateTimeOffset.UtcNow;
+        ModifiedBy             = SelfRegisteredActor;
+    }
+    
+    public void CancelDeletionRequest()
+    {
+        if (!DeletionRequestedAtUtc.HasValue) return;
+
+        DeletionRequestedAtUtc = null;
+        ModifiedAtUtc          = DateTimeOffset.UtcNow;
+        ModifiedBy             = SelfRegisteredActor;
+    }
+    
+    public void Delete(string deletedBy)
+    {
+        if (IsDeleted) return;
+
+        var trimmedDeletedBy = DomainGuards.RequireNonEmpty(
+            deletedBy, "DOMAIN_USER_INVALID_DELETED_BY", "DeletedBy is required.");
+
+        Anonymise(trimmedDeletedBy);
+
+        IsDeleted              = true;
+        DeletedAtUtc           = DateTimeOffset.UtcNow;
+        DeletedBy              = trimmedDeletedBy;
+        IsActive               = false;
+        DeletionRequestedAtUtc = null;
+        ModifiedAtUtc          = DateTimeOffset.UtcNow;
+        ModifiedBy             = trimmedDeletedBy;
+    }
+    
+    private void Anonymise(string deletedBy)
+    {
+        Email               = $"deleted_{Id}@deleted.invalid";
+        UserName            = $"deleted_{Id}@deleted.invalid";
+        NormalizedEmail     = $"DELETED_{Id}@DELETED.INVALID";
+        NormalizedUserName  = $"DELETED_{Id}@DELETED.INVALID";
+        FirstName           = "Deleted";
+        LastName            = "User";
+        PhoneNumber         = null;
     }
     
     #endregion

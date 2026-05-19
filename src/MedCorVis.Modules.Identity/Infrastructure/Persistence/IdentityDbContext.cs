@@ -64,6 +64,24 @@ internal sealed class IdentityDbContext
 
             entity.HasIndex(x => x.IsActive)
                 .HasDatabaseName("IX_Users_Is_Active");
+            
+            entity.Property(x => x.IsDeleted)
+                .IsRequired()
+                .HasDefaultValue(false);
+
+            entity.Property(x => x.DeletedAtUtc)
+                .HasColumnType("datetimeoffset");
+
+            entity.Property(x => x.DeletedBy)
+                .HasMaxLength(IAuditableEntity.ModifiedByMaxLength);
+
+            entity.Property(x => x.DeletionRequestedAtUtc)
+                .HasColumnType("datetimeoffset");
+
+            entity.HasIndex(x => x.DeletionRequestedAtUtc)
+                .HasDatabaseName("IX_Users_DeletionRequestedAtUtc");
+
+            entity.HasQueryFilter(u => !u.IsDeleted);
         });
 
         builder.Entity<ApplicationRole>(entity =>
